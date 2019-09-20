@@ -1,14 +1,3 @@
-'''
-================================================================================
-=========================== EXECUTION PARAMETERS ===============================
-================================================================================
-
-TEST_MODE:  dont train, just test. if there is no model on the STATE_DICT_PATH
-            (see below) path and TEST_MODE = True, it will be used a newly
-            generated model
-'''
-
-TEST_MODE = False
 
 '''
 ================================================================================
@@ -50,20 +39,31 @@ WORD_EMBEDDING_DIM = 350
 CHAR_EMBEDDING_DIM = 70
 BILSTM_SIZE = 150
 
-'''
-================================================================================
-============================ TRAINING PARAMETERS ===============================
-================================================================================
-
-EPOCHS:             num. of epochs that the model will train
-BATCH_SIZE:         size of batch used for training
-GRADIENT_CLIPPING:  gradient clipping used on training
 
 '''
+================================================================================
+============================== TSNE PARAMETERS =================================
+================================================================================
 
-EPOCHS = 55
-BATCH_SIZE = 32
-GRADIENT_CLIPPING = 25
+
+
+'''
+
+TRAIN_EMBEDDINGS = {
+    "embeddings1" : True,
+    "embeddings2" : True,
+    "embeddings3" : True,
+    "embeddings4" : True,
+}
+
+EMBEDDINGS_PATH = {
+    "embeddings1": "emd1.pickle",
+    "embeddings2": "emd2.pickle",
+    "embeddings3": "emd3.pickle",
+    "embeddings4": "emd4.pickle",
+}
+
+
 
 '''
 ================================================================================

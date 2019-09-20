@@ -49,7 +49,7 @@ for dataset in datasets:
 '''
 #########################################################################################
 #########                                                                    ############
-#########                     DEFINING MODELS AND TRAINING                   ############
+#########                     DEFINING AND LOADING MODELS                    ############
 #########                                                                    ############
 #########################################################################################
 '''
@@ -65,9 +65,6 @@ pos_model.to(device)
 send_output(str(pos_model), 1)
 
 
-# trains model if not in test mode
-if TEST_MODE == False:
-    pos_model, min_val_loss = train(device, pos_model, datasets)
 
 # Loading the model with best loss on the validation
 try:
@@ -79,7 +76,7 @@ except:
 '''
 #########################################################################################
 #########                                                                    ############
-#########                        SAVING AND TESTING                          ############
+#########                          LOADING T-SNE                             ############
 #########                                                                    ############
 #########################################################################################
 '''
