@@ -20,7 +20,10 @@ def train_tsnes(device, model, datasets):
             inputs = [[word.to(device) for word in sample] for sample in inputs]
 
             # Feeding the model
-            embeddings.append(model(inputs)[rep].cpu())
+            # embeddings.append(model(inputs)[rep].cpu())
+
+            del model(inputs)[rep], inputs, _
+            torch.cuda.empty_cache()
 
         tsne = TSNE()
         t_embeddings = tsne.fit_transform(embeddings)
