@@ -21,6 +21,8 @@ def train_tsnes(device, model, datasets):
 
             # Feeding the model
             embeddings.append(model(inputs)[rep])
+            del model(inputs)[rep]
+            del inputs, _
 
         tsne = TSNE()
         t_embeddings = tsne.fit_transform(embeddings)
