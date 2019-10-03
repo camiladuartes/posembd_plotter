@@ -20,9 +20,7 @@ def train_tsnes(device, model, datasets):
             inputs = [[word.to(device) for word in sample] for sample in inputs]
 
             # Feeding the model
-            embeddings.append(model(inputs)[rep])
-            del model(inputs)[rep]
-            del inputs, _
+            embeddings.append(model(inputs)[rep].cpu())
 
         tsne = TSNE()
         t_embeddings = tsne.fit_transform(embeddings)
