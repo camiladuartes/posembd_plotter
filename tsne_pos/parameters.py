@@ -29,15 +29,12 @@ DATASETS = [
 ============================= MODEL PARAMETERS =================================
 ================================================================================
 
-WORD_EMBEDDING_DIM:     size of the word embeddings, representations x^(1), x^(2) and x^(3)
-CHAR_EMBEDDING_DIM:     size of char embeddings, components of the char look-up table from the $f$ block
-BILSTM_SIZE:            size of the pos embeddings, representations from $p$ block
-
 '''
 
 WORD_EMBEDDING_DIM = 350
 CHAR_EMBEDDING_DIM = 70
 BILSTM_SIZE = 150
+MODEL_PATH = 'postag_sdict_WED_350_CED_70_BS_150.pt'
 
 
 '''

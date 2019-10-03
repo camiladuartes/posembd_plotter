@@ -1,12 +1,13 @@
 from sklearn.manifold import TSNE
+from tsne_pos.utils import get_batches
 import pickle
+from tsne_pos.parameters import TRAIN_EMBEDDINGS, EMBEDDINGS_PATH
 
-def train_tsnes(device, model, datasets, train, path):
-    representations = ["embeddings{}".format(i) for i in range(1,5)] #
+def train_tsnes(device, model, datasets):
 
     model.eval()
-    for rep in representations:
-        if train[rep] == False:
+    for rep, to_train  in TRAIN_EMBEDDINGS.items():
+        if to_train == False:
             continue
 
         embeddings = []
@@ -28,7 +29,7 @@ def train_tsnes(device, model, datasets, train, path):
         d = dict(zip(embeddings, t_embeddings))
 
         try:
-            pickle_out = open(path[rep], "wb")
+            pickle_out = open(EMBEDDINGS_PATH[rep], "wb")
             pickle.dump(d, pickle_out)
             pickle_out.close()
         except:
@@ -45,4 +46,3 @@ def load_tsne(path, rep):
     except:
         print("Wasn't able to load pickle file")
     return d
-

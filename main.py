@@ -8,17 +8,14 @@ import numpy as np
 
 import torch
 
-from tsne_pos import build_char_dict
+from tsne_pos.utils import send_output
+from tsne_pos.dataset import build_char_dict, load_datasets
+from tsne_pos.parameters import *
+from tsne_pos.tsne import train_tsnes
 
-
-from pos_tagger.utils import send_output, load_datasets
-from pos_tagger.Dataset import build_char_dict
-from pos_tagger.parameters import *
-from pos_tagger.tsne import train_tsnes
-
-from models.ModelCharBiLSTM import CharBILSTM
-from models.ModelWordBiLSTM import WordBILSTM
-from models.ModelPOSTagger import POSTagger
+from tsne_pos.models.CharBILSTM import CharBILSTM
+from tsne_pos.models.WordBILSTM import WordBILSTM
+from tsne_pos.models.POSTagger import POSTagger
 
 
 torch.set_printoptions(threshold=10000)

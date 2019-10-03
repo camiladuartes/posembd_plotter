@@ -1,5 +1,6 @@
 import torch
-from pos_tagger.utils import send_output
+from tsne_pos.utils import send_output
+from tsne_pos.parameters import DATASETS_FOLDER, DATASETS
 
 def build_char_dict(datasets):
     send_output("\n>> Building char dict...", 1)
@@ -15,7 +16,6 @@ def build_char_dict(datasets):
 
     send_output("<< Finished building dicts!", 1)
     return char2id, id2char
-
 
 class Dataset():
     def __init__(self, path_to_files, dataset_name, use_delimiters=True, use_train=True, use_val=True):
@@ -130,3 +130,14 @@ class Dataset():
         ret += ("=================================================================\n")
 
         return ret
+
+
+def load_datasets():
+    pf = DATASETS_FOLDER
+    datasets = [
+        Dataset([pf + dataset[1][0], pf + dataset[2][0], pf + dataset[3]], dataset[0], use_train=dataset[1][1],
+                        use_val=dataset[2][1])
+        for dataset in DATASETS
+    ]
+
+    return datasets
