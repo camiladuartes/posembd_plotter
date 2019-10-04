@@ -11,7 +11,7 @@ def train_tsnes(device, model, datasets):
         if to_train == False:
             continue
 
-        embeddings = []
+        sent_embeddings = []
         for itr in get_batches(datasets, "train"):
 
             # Getting vars
@@ -22,7 +22,7 @@ def train_tsnes(device, model, datasets):
 
             # Feeding the model
 
-            embeddings.append(model(inputs)[rep].data.cpu().numpy()[0])
+            sent_embeddings.append(model(inputs)[rep].data.cpu().numpy()[0])
             # print(model(inputs)[rep])
             # print(model(inputs)[rep].cpu())
 
@@ -30,10 +30,16 @@ def train_tsnes(device, model, datasets):
             torch.cuda.empty_cache()
 
         tsne = TSNE()
-        t_embeddings = tsne.fit_transform(embeddings)
 
+        lembeddings = [emdb for sent in sent_embeddings for emdb in sent]
+        del sent_embeddings
+
+        t_embeddings = tsne.fit_transform(lembeddings)
+
+
+        lembeddings = [str(e) for e in lembeddings]
         # montando o dicionario
-        d = dict(zip(embeddings, t_embeddings))
+        d = dict(zip(lembeddings, t_embeddings))
 
         try:
             pickle_out = open(EMBEDDINGS_PATH[rep], "wb")
@@ -42,12 +48,12 @@ def train_tsnes(device, model, datasets):
         except:
             print("Wasn't able to save to pickle file")
 
-        del embeddings, t_embeddings
+        del lembeddings, t_embeddings
 
-def load_tsne(path, rep):
+def load_tsne(rep):
     d = None
     try:
-        pickle_in = open(path[rep], "rb")
+        pickle_in = open(EMBEDDINGS_PATH[rep], "rb")
         d = pickle.load(pickle_in)
         pickle_in.close()
     except:
