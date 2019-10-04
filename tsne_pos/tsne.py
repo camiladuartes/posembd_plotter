@@ -21,7 +21,9 @@ def train_tsnes(device, model, datasets):
             inputs = [[word.to(device) for word in sample] for sample in inputs]
 
             # Feeding the model
-            embeddings.append(model(inputs)[rep].cpu().clone())
+
+            embeddings.append(model(inputs)[rep].data.cpu().numpy()[0])
+            # print(model(inputs)[rep])
             # print(model(inputs)[rep].cpu())
 
             del model(inputs)[rep], inputs, _
