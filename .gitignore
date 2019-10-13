@@ -1,3 +1,4 @@
 env_propor
-.idea
+.idea/
 *.pyc
+*.pickle
