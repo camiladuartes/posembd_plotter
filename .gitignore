@@ -1,4 +1,5 @@
-/.idea/*
+.idea/
 *.pyc
 *.pickle
-/env_propor/*
+env_porpor/
+output.txt
