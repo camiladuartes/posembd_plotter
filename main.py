@@ -11,7 +11,8 @@ import torch
 from tsne_pos.utils import send_output
 from tsne_pos.dataset import build_char_dict, load_datasets
 from tsne_pos.parameters import *
-from tsne_pos.tsne import train_tsnes
+from tsne_pos.tsne import train_tsnes, load_tsne
+from tsne_pos.visualize import plot
 
 from tsne_pos.models.CharBILSTM import CharBILSTM
 from tsne_pos.models.WordBILSTM import WordBILSTM
@@ -81,4 +82,7 @@ except:
 #########################################################################################
 '''
 
-train_tsnes(device, pos_model, datasets)
+train_tsnes(device, pos_model, datasets, id2char)
+
+ds = [load_tsne(k) for k in EMBEDDINGS_PATH.keys()]
+plot(ds)

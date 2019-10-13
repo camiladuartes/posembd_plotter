@@ -55,7 +55,7 @@ def do_policy(policy, datasets, batch_size, list_samples):
     else:
         pass
 
-    return list_batches
+    return list_batches[:5]
 
 def get_batches(datasets, tvt, batch_size=1, policy="emilia"):
     list_samples = []
