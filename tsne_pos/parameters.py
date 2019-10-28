@@ -68,6 +68,13 @@ EMBEDDINGS_PATH = {
 
 
 '''
+PLOT_FLAG = {
+    "embeddings1": True,
+    "embeddings2" : True,
+    "embeddings3" : True,
+    "embeddings4" : True,
+}
+
 
 PLOT_COLORS = {
     "embeddings1": "yellow",
@@ -92,7 +99,7 @@ STATE_DICT_PATH:    path for saving the model during training that is going to b
 '''
 
 OUTPUT_PATH = 'output.txt'
-LOG_LVL = 1
+LOG_LVL = 0
 STATE_DICT_PATH = 'postag_sdict_WED_{}_CED_{}_BS_{}.pt'.format(WORD_EMBEDDING_DIM,
                                                                  CHAR_EMBEDDING_DIM,
                                                                  BILSTM_SIZE)
