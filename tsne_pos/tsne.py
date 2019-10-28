@@ -1,5 +1,5 @@
 from sklearn.manifold import TSNE
-from tsne_pos.utils import get_batches
+from tsne_pos.utils import get_batches, convertToText
 import pickle
 from tsne_pos.parameters import TRAIN_EMBEDDINGS, EMBEDDINGS_PATH
 import torch
@@ -16,7 +16,6 @@ def train_tsnes(device, model, datasets, id2char):
         pred_tags = []
         gold_tags = []
         for itr in get_batches(datasets, "train"):
-
             # Getting vars
             inputs, targets, _ = itr
 
@@ -35,38 +34,34 @@ def train_tsnes(device, model, datasets, id2char):
             sent_embeddings = [embd for embd in output[rep].data.cpu().numpy()[0]]
             sent_pred_tags = [tag.data.cpu().numpy().item(0) for tag in targets[0]]
 
-
             embeddings += sent_embeddings
             words += sent_words
             gold_tags += sent_gold_tags
             pred_tags += sent_pred_tags
 
-            del model(inputs)[rep], inputs, _, sent_words, sent_embeddings
+            del output, inputs, _, sent_words, sent_embeddings
             torch.cuda.empty_cache()
 
         tsne = TSNE()
 
-        t_embeddings = tsne.fit_transform(embeddings)
-
-
         embeddings = [tuple(e.tolist()) for e in embeddings]
+        unique_embeddings = list(set(embeddings))
+
+        if len(embeddings) == len(unique_embeddings):
+            del unique_embeddings
+            unique_embeddings = embeddings
+
+        t_embeddings = tsne.fit_transform(unique_embeddings)
         t_embeddings = [tuple(e.tolist()) for e in t_embeddings]
 
-        for i in range(len(words)):
-            if len(words[i]) == 1:
-                if words[i][0] == '\001':
-                    words[i] = "BOS"
-                else:
-                    words[i] = "EOS"
-            else:
-                words[i] = "".join(words[i][1:-1])
-
         # montando o dicionario
-        emb2tsne = dict(zip(embeddings, t_embeddings))
+        emb2tsne = dict(zip(unique_embeddings, t_embeddings))
+
+        convertToText(words)
 
         tsne2word = {}
         for i in range(len(words)):
-            tsne2word[t_embeddings[i]] = (words[i], gold_tags[i], pred_tags[i])
+            tsne2word[emb2tsne[embeddings[i]]] = (words[i], gold_tags[i], pred_tags[i])
 
         path_emb2tsne = "emb2tsne_" + EMBEDDINGS_PATH[rep]
         path_tsne2word = "tsen2word_" + EMBEDDINGS_PATH[rep]
@@ -83,17 +78,25 @@ def train_tsnes(device, model, datasets, id2char):
 
         del embeddings, t_embeddings
 
-def load_tsne(rep):
-    emb2tsne, tsne2word = None, None
-    path_emb2tsne = "emb2tsne_" + EMBEDDINGS_PATH[rep]
-    path_tsne2word = "tsen2word_" + EMBEDDINGS_PATH[rep]
-    try:
-        pickle_in = open(path_emb2tsne, "rb")
-        emb2tsne = pickle.load(pickle_in)
-        pickle_in.close()
-        pickle_in = open(path_tsne2word, "rb")
-        tsne2word = pickle.load(pickle_in)
-        pickle_in.close()
-    except:
-        print("Wasn't able to load pickle file")
-    return emb2tsne, tsne2word
+def load_tsnes():
+    rep2dicts = dict()
+
+    for rep, path in EMBEDDINGS_PATH.items():
+        emb2tsne, tsne2word = None, None
+
+        path_emb2tsne = "emb2tsne_" + path
+        path_tsne2word = "tsen2word_" + path
+
+        try:
+            pickle_in = open(path_emb2tsne, "rb")
+            emb2tsne = pickle.load(pickle_in)
+            pickle_in.close()
+            pickle_in = open(path_tsne2word, "rb")
+            tsne2word = pickle.load(pickle_in)
+            pickle_in.close()
+
+            rep2dicts[rep] = (emb2tsne, tsne2word)
+        except:
+            print("Wasn't able to load pickle file for {}".format(rep))
+
+    return rep2dicts

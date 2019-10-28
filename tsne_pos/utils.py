@@ -2,6 +2,16 @@ import random, sys
 import tqdm
 from tsne_pos.parameters import LOG_LVL, OUTPUT_PATH, DATASETS_FOLDER, DATASETS
 
+def convertToText(words):
+    for i in range(len(words)):
+        if len(words[i]) == 1:
+            if words[i][0] == '\001':
+                words[i] = "BOS"
+            else:
+                words[i] = "EOS"
+        else:
+            words[i] = "".join(words[i][1:-1])
+
 
 def send_output(str, log_level):
     if log_level <= LOG_LVL:
@@ -55,7 +65,7 @@ def do_policy(policy, datasets, batch_size, list_samples):
     else:
         pass
 
-    return list_batches[:5]
+    return list_batches
 
 def get_batches(datasets, tvt, batch_size=1, policy="emilia"):
     list_samples = []
