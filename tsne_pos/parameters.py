@@ -47,10 +47,10 @@ MODEL_PATH = 'postag_sdict_WED_350_CED_70_BS_150.pt'
 '''
 
 TRAIN_EMBEDDINGS = {
-    "embeddings1" : True,
-    "embeddings2" : True,
-    "embeddings3" : True,
-    "embeddings4" : True,
+    "embeddings1" : False,
+    "embeddings2" : False,
+    "embeddings3" : False,
+    "embeddings4" : False,
 }
 
 EMBEDDINGS_PATH = {
@@ -70,9 +70,9 @@ EMBEDDINGS_PATH = {
 '''
 PLOT_FLAG = {
     "embeddings1": True,
-    "embeddings2" : True,
-    "embeddings3" : True,
-    "embeddings4" : True,
+    "embeddings2" : False,
+    "embeddings3" : False,
+    "embeddings4" : False,
 }
 
 

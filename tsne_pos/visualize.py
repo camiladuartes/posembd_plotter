@@ -20,6 +20,7 @@ def visualize(title, emb2tsne, tsne2word, colors):
 
     plt.title(title)
     plt.show()
+    # plt.savefig('foo.svg')
 
 def plot(rep2dicts):
 
