@@ -2,6 +2,20 @@ import random, sys
 import tqdm
 from tsne_pos.parameters import LOG_LVL, OUTPUT_PATH, DATASETS_FOLDER, DATASETS
 
+
+def printToFile(tsne2word):
+
+    file1 = open("embeddings", "w")
+    file2 = open("embeddings_meta", "w")
+
+    for tsne, vals in tsne2word.items():
+        file1.write("{}\t{}\n".format(tsne[0], tsne[1]))
+        file2.write("{}\t{}\t{}\n".format(vals[0], vals[1], vals[2]))
+
+    file1.close()
+    file2.close()
+
+
 def convertToText(words):
     for i in range(len(words)):
         if len(words[i]) == 1:

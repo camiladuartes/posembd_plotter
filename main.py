@@ -8,7 +8,7 @@ import numpy as np
 
 import torch
 
-from tsne_pos.utils import send_output
+from tsne_pos.utils import send_output, printToFile
 from tsne_pos.dataset import build_char_dict, load_datasets
 from tsne_pos.parameters import *
 from tsne_pos.tsne import train_tsnes, load_tsnes
@@ -95,3 +95,4 @@ rep2dicts = load_tsnes()
 '''
 
 plot(rep2dicts)
+# printToFile(rep2dicts['embeddings1'][1])
