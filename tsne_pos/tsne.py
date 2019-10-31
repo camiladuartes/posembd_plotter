@@ -1,6 +1,5 @@
 from sklearn.manifold import TSNE
-from tsne_pos.utils import get_batches, convertToText
-import pickle
+from tsne_pos.utils import get_batches, convertToText, saveToPickle, loadFromPickle
 from tsne_pos.parameters import TRAIN_EMBEDDINGS, EMBEDDINGS_PATH
 import torch
 
@@ -42,12 +41,14 @@ def train_tsnes(device, model, datasets, id2char):
             del output, inputs, _, sent_words, sent_embeddings
             torch.cuda.empty_cache()
 
+        saveToPickle('temp.pickle', (words, pred_tags, gold_tags))
+        del words, pred_tags, gold_tags
+
         tsne = TSNE(verbose=1)
 
         for i in range(len(embeddings)):
             embeddings[i] = tuple(embeddings[i].tolist())
 
-        print("ok1")
         unique_embeddings = None
 
         if rep == 'embeddings1':
@@ -57,7 +58,8 @@ def train_tsnes(device, model, datasets, id2char):
 
 
         t_embeddings = tsne.fit_transform(unique_embeddings)
-        print("ok2")
+
+
 
         for i in range(len(t_embeddings)):
             t_embeddings[i] = tuple(t_embeddings[i].tolist())
@@ -66,6 +68,7 @@ def train_tsnes(device, model, datasets, id2char):
         # montando o dicionario
         emb2tsne = dict(zip(unique_embeddings, t_embeddings))
 
+        words, pred_tags, gold_tags = loadFromPickle('temp.pickle')
         convertToText(words)
 
         tsne2word = {}
@@ -76,12 +79,8 @@ def train_tsnes(device, model, datasets, id2char):
         path_tsne2word = "tsen2word_" + EMBEDDINGS_PATH[rep]
 
         try:
-            pickle_out = open(path_emb2tsne, "wb")
-            pickle.dump(emb2tsne, pickle_out)
-            pickle_out.close()
-            pickle_out = open(path_tsne2word, "wb")
-            pickle.dump(tsne2word, pickle_out)
-            pickle_out.close()
+            saveToPickle(path_emb2tsne, emb2tsne)
+            saveToPickle(path_tsne2word, tsne2word)
         except:
             print("Wasn't able to save to pickle file")
 
@@ -97,13 +96,8 @@ def load_tsnes():
         path_tsne2word = "tsen2word_" + path
 
         try:
-            pickle_in = open(path_emb2tsne, "rb")
-            emb2tsne = pickle.load(pickle_in)
-            pickle_in.close()
-            pickle_in = open(path_tsne2word, "rb")
-            tsne2word = pickle.load(pickle_in)
-            pickle_in.close()
-
+            emb2tsne = loadFromPickle(path_emb2tsne)
+            tsne2word = loadFromPickle(path_tsne2word)
             rep2dicts[rep] = (emb2tsne, tsne2word)
         except:
             print("Wasn't able to load pickle file for {}".format(rep))

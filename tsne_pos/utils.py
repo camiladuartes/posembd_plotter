@@ -3,6 +3,18 @@ import tqdm
 from tsne_pos.parameters import LOG_LVL, OUTPUT_PATH, DATASETS_FOLDER, DATASETS
 
 
+def saveToPickle(filePath, obj):
+    pickle_out = open(filePath, "wb")
+    pickle.dump(obj, pickle_out)
+    pickle_out.close()
+
+def loadFromPickle(filePath):
+    pickle_in = open(filePath, "rb")
+    obj = pickle.load(pickle_in)
+    pickle_in.close()
+
+    return obj
+
 def printToFile(tsne2word):
 
     file1 = open("embeddings", "w")
