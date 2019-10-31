@@ -44,17 +44,25 @@ def train_tsnes(device, model, datasets, id2char):
 
         tsne = TSNE()
 
-        embeddings = [tuple(e.tolist()) for e in embeddings]
+        for i in range(len(embeddings)):
+            embeddings[i] =
+
+        print("ok1")
         unique_embeddings = None
-        
+
         if rep == 'embeddings1':
             unique_embeddings = list(set(embeddings))
         else:
             unique_embeddings = embeddings
 
-        t_embeddings = tsne.fit_transform(unique_embeddings)
-        t_embeddings = [tuple(e.tolist()) for e in t_embeddings]
 
+        t_embeddings = tsne.fit_transform(unique_embeddings)
+        print("ok2")
+
+        for i in range(len(t_embeddings)):
+            t_embeddings[i] = tuple(t_embeddings[i].tolist())
+
+        print("ok3")
         # montando o dicionario
         emb2tsne = dict(zip(unique_embeddings, t_embeddings))
 
