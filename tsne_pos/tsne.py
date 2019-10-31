@@ -45,10 +45,11 @@ def train_tsnes(device, model, datasets, id2char):
         tsne = TSNE()
 
         embeddings = [tuple(e.tolist()) for e in embeddings]
-        unique_embeddings = list(set(embeddings))
-
-        if len(embeddings) == len(unique_embeddings):
-            del unique_embeddings
+        unique_embeddings = None
+        
+        if rep == 'embeddings1':
+            unique_embeddings = list(set(embeddings))
+        else:
             unique_embeddings = embeddings
 
         t_embeddings = tsne.fit_transform(unique_embeddings)
