@@ -45,7 +45,7 @@ def train_tsnes(device, model, datasets, id2char):
         tsne = TSNE()
 
         for i in range(len(embeddings)):
-            embeddings[i] =
+            embeddings[i] = tuple(embeddings[i].tolist())
 
         print("ok1")
         unique_embeddings = None
