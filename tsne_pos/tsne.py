@@ -42,7 +42,7 @@ def train_tsnes(device, model, datasets, id2char):
             del output, inputs, _, sent_words, sent_embeddings
             torch.cuda.empty_cache()
 
-        tsne = TSNE()
+        tsne = TSNE(verbose=1)
 
         for i in range(len(embeddings)):
             embeddings[i] = tuple(embeddings[i].tolist())
