@@ -1,7 +1,7 @@
 import random, sys
 import tqdm
 from tsne_pos.parameters import LOG_LVL, OUTPUT_PATH, DATASETS_FOLDER, DATASETS
-
+import pickle
 
 def saveToPickle(filePath, obj):
     pickle_out = open(filePath, "wb")

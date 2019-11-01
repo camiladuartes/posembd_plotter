@@ -2,7 +2,6 @@ from sklearn.manifold import TSNE
 from tsne_pos.utils import get_batches, convertToText, saveToPickle, loadFromPickle
 from tsne_pos.parameters import TRAIN_EMBEDDINGS, EMBEDDINGS_PATH
 import torch
-import pickle
 
 def train_tsnes(device, model, datasets, id2char):
 
