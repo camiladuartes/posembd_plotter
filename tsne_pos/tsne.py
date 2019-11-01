@@ -3,6 +3,49 @@ from tsne_pos.utils import get_batches, convertToText, saveToPickle, loadFromPic
 from tsne_pos.parameters import TRAIN_EMBEDDINGS, EMBEDDINGS_PATH
 import torch
 
+def computeEmbeddings(device, model, datasets, id2char):
+    model.eval()
+
+    embeddings = {rep: []
+            for rep, to_train in TRAIN_EMBEDDINGS.items()
+            if to_train == True}
+
+    words = []
+    pred_tags = []
+    gold_tags = []
+    for itr in get_batches(datasets, "train"):
+        # Getting vars
+        inputs, targets, _ = itr
+
+        sent_gold_tags = [tag.data.cpu().numpy().item(0) for tag in targets[0]]
+        sent_words = [word_tensor.data.cpu().numpy() for word_tensor in inputs[0]]
+        sent_words = [[id2char[c] for c in word] for word in sent_words]
+
+        # Setting the input and the target (seding to GPU if needed)
+        inputs = [[word.to(device) for word in sample] for sample in inputs]
+
+        # Feeding the model
+        output = model(inputs)
+        _, pred = torch.max(output['Macmorpho'], 2)
+        pred = pred.view(1, -1)
+
+        sent_pred_tags = [tag.data.cpu().numpy().item(0) for tag in targets[0]]
+
+        for rep in embeddings:
+            embeddings[rep] += [embd for embd in output[rep].data.cpu().numpy()[0]]
+        words += sent_words
+        gold_tags += sent_gold_tags
+        pred_tags += sent_pred_tags
+
+        torch.cuda.empty_cache()
+
+    saveToPickle('wpg_temp.pickle', (words, pred_tags, gold_tags))
+
+    for rep, embd in embeddings.items():
+        saveToPickle(rep + '_temp.pickle', embd)
+
+
+
 def train_tsnes(device, model, datasets, id2char):
 
     model.eval()
@@ -41,7 +84,8 @@ def train_tsnes(device, model, datasets, id2char):
             del output, inputs, _, sent_words, sent_embeddings
             torch.cuda.empty_cache()
 
-        saveToPickle('temp.pickle', (words, pred_tags, gold_tags))
+
+        saveToPickle('temp_embeddings.pickle', embeddings)
         del words, pred_tags, gold_tags
 
         tsne = TSNE(verbose=1)

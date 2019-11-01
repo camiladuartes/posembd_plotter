@@ -11,7 +11,7 @@ import torch
 from tsne_pos.utils import send_output, printToFile
 from tsne_pos.dataset import build_char_dict, load_datasets
 from tsne_pos.parameters import *
-from tsne_pos.tsne import train_tsnes, load_tsnes
+from tsne_pos.tsne import train_tsnes, load_tsnes, computeEmbeddings
 from tsne_pos.visualize import plot
 
 from tsne_pos.models.CharBILSTM import CharBILSTM
@@ -83,8 +83,8 @@ except:
 #########################################################################################
 '''
 
-train_tsnes(device, pos_model, datasets, id2char)
-rep2dicts = load_tsnes()
+computeEmbeddings(device, pos_model, datasets, id2char)
+# rep2dicts = load_tsnes()
 
 '''
 #########################################################################################
@@ -94,5 +94,5 @@ rep2dicts = load_tsnes()
 #########################################################################################
 '''
 
-plot(rep2dicts)
+# plot(rep2dicts)
 # printToFile(rep2dicts['embeddings1'][1])
