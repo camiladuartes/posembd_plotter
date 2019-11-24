@@ -60,7 +60,10 @@ def computeEmbeddings(device, model, datasets, id2char):
     for rep, embd in embeddings.items():
         print(rep)
         for i in range(len(embd)):
-            embd[i] = tuple(embd[i].tolist())
+            embd[i] = embd[i].tolist()
+        print(rep)
+        for i in range(len(embd)):
+            embd[i] = tuple(embd[i])
         print(rep)
         saveToPickle(rep + '_temp.pickle', embd)
         print(rep)
