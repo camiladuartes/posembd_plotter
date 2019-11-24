@@ -58,9 +58,12 @@ def computeEmbeddings(device, model, datasets, id2char):
     saveToPickle('vocabDict.pickle', word2id)
 
     for rep, embd in embeddings.items():
+        print(rep)
         for i in range(len(embd)):
             embd[i] = tuple(embd[i].tolist())
+        print(rep)
         saveToPickle(rep + '_temp.pickle', embd)
+        print(rep)
 
 
 def trainTSNEs():
