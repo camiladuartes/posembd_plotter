@@ -4,19 +4,24 @@ import datetime
 import random
 import sys
 
+from posembd.datasets import DatasetsPreparer, UsableDataset
+from posembd.models import createPOSModel
+from posembd.io import sendOutput
+
+
 import numpy as np
 
 import torch
 
-from tsne_pos.utils import send_output, printToFile
-from tsne_pos.dataset import build_char_dict, load_datasets
+# from tsne_pos.utils import send_output, printToFile
+# from tsne_pos.dataset import build_char_dict, load_datasets
 from tsne_pos.parameters import *
-from tsne_pos.tsne import trainTSNEs, load_tsnes, computeEmbeddings
+from tsne_pos.tsne import trainTSNEs, loadTSNEs, computeEmbeddings
 from tsne_pos.visualize import plot
 
-from tsne_pos.models.CharBILSTM import CharBILSTM
-from tsne_pos.models.WordBILSTM import WordBILSTM
-from tsne_pos.models.POSTagger import POSTagger
+# from tsne_pos.models.CharBILSTM import CharBILSTM
+# from tsne_pos.models.WordBILSTM import WordBILSTM
+# from tsne_pos.models.POSTagger import POSTagger
 
 
 torch.set_printoptions(threshold=10000)
@@ -33,19 +38,23 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 #########################################################################################
 '''
 
+datasetsPreparer = DatasetsPreparer(DATASETS_FOLDER)
+datasets = datasetsPreparer.prepare(DATASETS)
+char2id, id2char = datasetsPreparer.getDicts()
+
 # dataset building
-datasets = load_datasets()
-
-# builds char-id table
-char2id, id2char = build_char_dict(datasets)
-
-# converts text to id from chars
-for dataset in datasets:
-    dataset.prepare(char2id)
-
-# prints the datasets details
-for dataset in datasets:
-    send_output(str(dataset), 1)
+# datasets = load_datasets()
+#
+# # builds char-id table
+# char2id, id2char = build_char_dict(datasets)
+#
+# # converts text to id from chars
+# for dataset in datasets:
+#     dataset.prepare(char2id)
+#
+# # prints the datasets details
+# for dataset in datasets:
+#     send_output(str(dataset), 1)
 
 '''
 #########################################################################################
@@ -56,24 +65,25 @@ for dataset in datasets:
 '''
 
 # building model
-posModel = POSTagger(CharBILSTM(CHAR_EMBEDDING_DIM, WORD_EMBEDDING_DIM, char2id),
-                      WordBILSTM(WORD_EMBEDDING_DIM),
-                      WordBILSTM(WORD_EMBEDDING_DIM),
-                      BILSTM_SIZE, datasets)
+# posModel = POSTagger(CharBILSTM(CHAR_EMBEDDING_DIM, WORD_EMBEDDING_DIM, char2id),
+#                       WordBILSTM(WORD_EMBEDDING_DIM),
+#                       WordBILSTM(WORD_EMBEDDING_DIM),
+#                       BILSTM_SIZE, datasets)
+posModel = createPOSModel(CHAR_EMBEDDING_DIM, WORD_EMBEDDING_DIM, char2id, BILSTM_SIZE, datasets)
 posModel.to(device)
 
 # prints model
-send_output(str(posModel), 1)
+sendOutput(str(posModel), 1)
 
 
 
 # Loading the model with best loss on the validation
-try:
-    pos_model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
-    send_output("Successfully loaded trained model", 1)
-except:
-    send_output("Was not able to load trained model\n", 0)
-    exit()
+# try:
+posModel.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+sendOutput("Successfully loaded trained model", 1)
+# except:
+#     send_output("Was not able to load trained model\n", 0)
+#     exit()
 
 '''
 #########################################################################################

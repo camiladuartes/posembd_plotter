@@ -17,11 +17,22 @@ DATASETS = [
 '''
 
 DATASETS_FOLDER = 'data/'
+# DATASETS = [
+#     ('Macmorpho', ('macmorpho-train.mm.txt', True), ('macmorpho-dev.mm.txt', True), 'macmorpho-test.mm.txt'),
+#     ('Bosque', ('pt_bosque-ud-train.mm.txt', True), ('pt_bosque-ud-dev.mm.txt', True), 'pt_bosque-ud-test.mm.txt'),
+#     ('GSD', ('pt_gsd-ud-train.mm.txt', True), ('pt_gsd-ud-dev.mm.txt', True), 'pt_gsd-ud-test.mm.txt'),
+#     ('Linguateca', ('lgtc-train.mm.txt', True), ('lgtc-dev.mm.txt', True), 'lgtc-test.mm.txt')
+# ]
+
 DATASETS = [
-    ('Macmorpho', ('macmorpho-train.mm.txt', True), ('macmorpho-dev.mm.txt', True), 'macmorpho-test.mm.txt'),
-    ('Bosque', ('pt_bosque-ud-train.mm.txt', True), ('pt_bosque-ud-dev.mm.txt', True), 'pt_bosque-ud-test.mm.txt'),
-    ('GSD', ('pt_gsd-ud-train.mm.txt', True), ('pt_gsd-ud-dev.mm.txt', True), 'pt_gsd-ud-test.mm.txt'),
-    ('Linguateca', ('lgtc-train.mm.txt', True), ('lgtc-dev.mm.txt', True), 'lgtc-test.mm.txt')
+    {'name': 'Macmorpho', 'trainFile': 'macmorpho-train.mm.txt', 'useTrain': True, 'valFile': 'macmorpho-dev.mm.txt',
+        'useVal': True, 'testFile': 'macmorpho-test.mm.txt'},
+    {'name': 'Bosque', 'trainFile': 'pt_bosque-ud-train.mm.txt', 'useTrain': True, 'valFile': 'pt_bosque-ud-dev.mm.txt',
+        'useVal': True, 'testFile': 'pt_bosque-ud-test.mm.txt'},
+    {'name': 'GSD', 'trainFile': 'pt_gsd-ud-train.mm.txt', 'useTrain': True, 'valFile': 'pt_gsd-ud-dev.mm.txt',
+        'useVal': True, 'testFile': 'pt_gsd-ud-test.mm.txt'},
+    {'name': 'Linguateca', 'trainFile': 'lgtc-train.mm.txt', 'useTrain': True, 'valFile': 'lgtc-dev.mm.txt',
+        'useVal': True, 'testFile': 'lgtc-test.mm.txt'}
 ]
 
 '''

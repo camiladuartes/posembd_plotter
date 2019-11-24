@@ -1,5 +1,6 @@
 from sklearn.manifold import TSNE
 from tsne_pos.utils import get_batches, convertToText, saveToPickle, loadFromPickle, createVocab
+from posembd.base import get_batches
 from tsne_pos.parameters import TRAIN_EMBEDDINGS, EMBEDDINGS_PATH
 import torch
 
