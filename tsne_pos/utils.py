@@ -38,6 +38,17 @@ def convertToText(words):
         else:
             words[i] = "".join(words[i][1:-1])
 
+def createVocab(wordList):
+    word2id = {}
+    idList = []
+    for word in wordList:
+        if word not in word2id:
+            word2id[word] = len(word2id)
+        idList.append(word2id[word])
+    return word2id, idList
+
+
+
 
 def send_output(str, log_level):
     if log_level <= LOG_LVL:
