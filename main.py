@@ -13,15 +13,10 @@ import numpy as np
 
 import torch
 
-# from tsne_pos.utils import send_output, printToFile
-# from tsne_pos.dataset import build_char_dict, load_datasets
 from tsne_pos.parameters import *
 from tsne_pos.tsne import trainTSNEs, loadTSNEs, computeEmbeddings
 from tsne_pos.visualize import plot
 
-# from tsne_pos.models.CharBILSTM import CharBILSTM
-# from tsne_pos.models.WordBILSTM import WordBILSTM
-# from tsne_pos.models.POSTagger import POSTagger
 
 
 torch.set_printoptions(threshold=10000)

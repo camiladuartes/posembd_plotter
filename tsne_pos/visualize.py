@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 import numpy as np
+
 from tsne_pos.parameters import PLOT_FLAG
+
 
 def visualize(title, emb2tsne, tsne2word, colors):
 
@@ -20,7 +22,7 @@ def visualize(title, emb2tsne, tsne2word, colors):
 
     plt.title(title)
     plt.show()
-    # plt.savefig('foo.svg')
+
 
 def plot(rep2dicts):
 
