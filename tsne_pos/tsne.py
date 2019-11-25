@@ -57,16 +57,25 @@ def computeEmbeddings(device, model, datasets, id2char):
     saveToPickle('wpgi_temp.pickle', (wordIdList, predTags, goldTags, wordSentId))
     saveToPickle('vocabDict.pickle', word2id)
 
+    print("1")
     for rep, embd in embeddings.items():
-        print(rep)
-        for i in range(len(embd)):
-            embd[i] = embd[i].tolist()
-        print(rep)
-        for i in range(len(embd)):
-            embd[i] = tuple(embd[i])
-        print(rep)
         saveToPickle(rep + '_temp.pickle', embd)
-        print(rep)
+    print("2")
+
+    del embeddings
+
+    print("3")
+
+    for rep, to_train in TRAIN_EMBEDDINGS.items():
+        if to_train == True:
+            emdb = loadFromPickle(rep + '_temp.pickle')
+            print("4")
+            for i in range(len(embd)):
+                embd[i] = embd[i].tolist()
+                embd[i] = tuple(embd[i])
+            print("5")
+            saveToPickle(rep + '.pickle', embd)
+            print("6")
 
 
 def trainTSNEs():
