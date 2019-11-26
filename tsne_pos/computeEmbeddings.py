@@ -79,7 +79,7 @@ def computeEmbeddings():
     wordPos = [(datasetNames[i], wordSentId[i][0], wordSentId[i][1])
                             for i in range(len(datasetNames))]
 
-    saveToPickle(INFOS_PATH, (wordPos, wordIdList, predTags, goldTags))
+    saveToPickle(INFOS_PICKLE_PATH, (wordPos, wordIdList, predTags, goldTags))
 
     for rep in embeddings:
         saveToPickle(EMBEDDINGS_PATH[rep], embd)

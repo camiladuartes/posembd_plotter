@@ -64,6 +64,13 @@ EMBEDDINGS_PICKLE_PATH = {
     "embeddings4": "emd4.pickle",
 }
 
+TSNE_PICKLE_PATH = {
+    "embeddings1": "tsne_emd1.pickle",
+    "embeddings2": "tsne_emd2.pickle",
+    "embeddings3": "tsne_emd3.pickle",
+    "embeddings4": "tsne_emd4.pickle",
+}
+
 EMBEDDINGS_TXT_PATH = {
     "embeddings1": "emd1.txt",
     "embeddings2": "emd2.txt",
@@ -71,7 +78,7 @@ EMBEDDINGS_TXT_PATH = {
     "embeddings4": "emd4.txt",
 }
 
-INFOS_PATH = "infos.pickle"
+INFOS_PICKLE_PATH = "infos.pickle"
 VOCAB_FILE = "vocab_file.txt"
 INFO_FILE = "info_file.txt"
 
