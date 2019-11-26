@@ -29,27 +29,65 @@ def loadFromPickle(filePath):
 
     return obj
 
-
+'''
+VocabFile:
+# Vocab file
+id_word word
+'''
 def writeVocabFile():
     pass
 
-
+'''
+returns: list of strings
+'''
 def readVocabFile():
     pass
 
-
+'''
+InfoFile:
+# Info file
+id_token dataset sent_id pos_sent id_word pred_tag gold_tag tsne_dim_0 tsne_dim_1
+'''
 def writeInfoFile():
     pass
 
+'''
+returns list of lists + columnDict
 
+list of lists:
+    info[i]: line i
+    info[i][j]: line i, column j
+
+columnDict = {
+    'id_token': 0,
+    'dataset': 1,
+    'sent_id': 2,
+    'pos_sent': 3,
+    'id_word': 4,
+    'pred_tag': 5,
+    'gold_tag': 6,
+    'tsne_dim_0': 7,
+    'tsne_dim_1': 8
+}
+'''
 def readInfoFile():
     pass
 
-
+'''
+embedding_iFile:
+# Embedding i File
+id_token embedding_i
+'''
 def writeEmbeddingFile():
     pass
 
+'''
+returns: list of lists
 
+lists of lists:
+    embeddings[i]: embedding i
+    embeddings[i][j]: embedding i, dim j
+'''
 def readEmbeddingFile():
     pass
 
