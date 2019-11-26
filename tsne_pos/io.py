@@ -30,6 +30,30 @@ def loadFromPickle(filePath):
     return obj
 
 
+def writeVocabFile():
+    pass
+
+
+def readVocabFile():
+    pass
+
+
+def writeInfoFile():
+    pass
+
+
+def readInfoFile():
+    pass
+
+
+def writeEmbeddingFile():
+    pass
+
+
+def readEmbeddingFile():
+    pass
+
+
 def printToFile(tsne2word):
 
     file1 = open("embeddings", "w")
