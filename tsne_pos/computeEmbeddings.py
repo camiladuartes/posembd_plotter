@@ -3,7 +3,7 @@ from posembd.datasets import DatasetsPreparer, UsableDataset
 from posembd.models import createPOSModel
 from posembd.io import sendOutput
 
-from tsne_pos.utils import convertToText, createVocab
+from tsne_pos.utils import convertToText, createVocab, convertToTagNames
 from tsne_pos.parameters import *
 
 
@@ -19,7 +19,7 @@ Funcao responsavel por recuperar:
 '''
 
 def computeEmbeddings():
-    device = torch.device("cuda" if torch.cudm a.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     torch.set_printoptions(threshold=10000)
     torch.no_grad()
@@ -32,20 +32,16 @@ def computeEmbeddings():
     posModel.to(device)
     posModel.load_state_dict(torch.load(MODEL_PATH, map_location=device))
 
-    # Seting device
+    posModel.eval()
 
-    model.eval()
+    embeddings = {rep: [] for rep in EMBEDDINGS_PATH}
 
-    embeddings = {rep: []
-            for rep, to_train in TRAIN_EMBEDDINGS.items()
-            if to_train == True}
-
-    words, predTags, goldTags, wordSentId = [], [], [], []
+    words, predTags, goldTags, wordSentId, datasetNames = [], [], [], [], []
 
     sentId = 0
     for itr in get_batches(datasets, "train"):
         # Getting vars
-        inputs, targets, _ = itr
+        inputs, targets, datasetName = itr
 
         sentGoldTags = [tag.data.cpu().numpy().item(0) for tag in targets[0]]
         sentWords = [wordTensor.data.cpu().numpy() for wordTensor in inputs[0]]
@@ -55,7 +51,7 @@ def computeEmbeddings():
         inputs = [[word.to(device) for word in sample] for sample in inputs]
 
         # Feeding the model
-        output = model(inputs)
+        output = posModel(inputs)
         _, pred = torch.max(output['Macmorpho'], 2)
         pred = pred.view(1, -1)
 
@@ -66,6 +62,7 @@ def computeEmbeddings():
         words += sentWords
         goldTags += sentGoldTags
         predTags += sentPredTags
+        datasetNames += [datasetName for _ in range(len(sentPredTags))]
 
         wordSentId += [(sentId, i) for i in range(len(sentGoldTags))]
 
@@ -73,10 +70,16 @@ def computeEmbeddings():
 
         sentId += 1
 
-    convertToText(words)
-    word2id, wordIdList = createVocab(words)
-    saveToPickle('wpgi_temp.pickle', (wordIdList, predTags, goldTags, wordSentId))
-    saveToPickle('vocabDict.pickle', word2id)
 
-    for rep, embd in embeddings.items():
-        saveToPickle(rep + '.pickle', embd)
+    convertToTagNames(datasetNames, datasets, goldTags)
+    convertToTagNames(datasetNames, datasets, predTags)
+    convertToText(words)
+    _, wordIdList = createVocab(words)
+
+    wordPos = [(datasetNames[i], wordSentId[i][0], wordSentId[i][1])
+                            for i in range(len(datasetNames))]
+
+    saveToPickle(INFOS_PATH, (wordPos, wordIdList, predTags, goldTags))
+
+    for rep in embeddings:
+        saveToPickle(EMBEDDINGS_PATH[rep], embd)

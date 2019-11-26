@@ -1,6 +1,6 @@
 import random, sys
 import tqdm
-from tsne_pos.parameters import LOG_LVL, OUTPUT_PATH
+from tsne_pos.parameters import *
 import pickle
 
 
@@ -34,22 +34,41 @@ VocabFile:
 # Vocab file
 id_word word
 '''
-def writeVocabFile():
-    pass
+def writeVocabFile(wordIdList):
+    with open(VOCAB_FILE, "w") as f:
+        f.write("id_word;word\n")
+        for index, word in enumerate(wordIdList):
+            f.write("{};{}\n".format(index, word))
+
 
 '''
 returns: list of strings
 '''
 def readVocabFile():
-    pass
+    wordIdList = []
+    with open(VOCAB_FILE, "r") as f:
+        for i, line in enumerate(f.readlines()):
+            if i == 0: continue
+            else: wordIdList.append(line.split(';')[1])
+
+    return wordIdList
+
 
 '''
 InfoFile:
 # Info file
-id_token dataset sent_id pos_sent id_word pred_tag gold_tag tsne_dim_0 tsne_dim_1
+id_token dataset id_sent pos_sent id_word pred_tag gold_tag tsne_0_0 tnse_0_1 tsne_1_0 tsne_1_1 tsne_2_0 tsne_2_1 tsne_3_0 tsne_3_1
 '''
-def writeInfoFile():
-    pass
+def writeInfoFile(tokenPos, wordIds, predTags, goldTags, tsnes):
+    with open(INFOS_PATH, "w") as f:
+        f.write("id_token;dataset;id_sent;pos_sent;id_word;pred_tag;gold_tag;tsne_0_0;tnse_0_1;tsne_1_0;tsne_1_1;tsne_2_0;tsne_2_1;tsne_3_0;tsne_3_1\n")
+        for index in range(len(wordIds)):
+            f.write("{};{};{};{};".format(index, tokenPos[0], tokenPos[1], tokenPos[2]))
+            f.write("{};{};{};".format(wordIds[index], predTags[i], goldTags[i]))
+            f.write("{};{};".format(tsnes["embeddings1"][0], tsnes["embeddings1"][1]))
+            f.write("{};{};".format(tsnes["embeddings2"][0], tsnes["embeddings2"][1]))
+            f.write("{};{};".format(tsnes["embeddings3"][0], tsnes["embeddings3"][1]))
+            f.write("{};{}\n".format(tsnes["embeddings4"][0], tsnes["embeddings4"][1]))
 
 '''
 returns list of lists + columnDict
@@ -58,28 +77,28 @@ list of lists:
     info[i]: line i
     info[i][j]: line i, column j
 
-columnDict = {
-    'id_token': 0,
-    'dataset': 1,
-    'sent_id': 2,
-    'pos_sent': 3,
-    'id_word': 4,
-    'pred_tag': 5,
-    'gold_tag': 6,
-    'tsne_dim_0': 7,
-    'tsne_dim_1': 8
-}
+columnDict = dict with columns ids
 '''
 def readInfoFile():
-    pass
+    info = []
+    columnDict = None
+    with open(INFOS_PATH, "r") as f:
+        for i, line in enumerate(f.readlines()):
+            if i == 0: columnDict = dict(enumerate(f.split(';')))
+            else: info.append(line.split(';'))
+
+    return info, columnDict
 
 '''
 embedding_iFile:
 # Embedding i File
 id_token embedding_i
 '''
-def writeEmbeddingFile():
-    pass
+def writeEmbeddingFile(rep, embeddings):
+    with open(EMBEDDINGS_TXT_PATH[rep], "w") as f:
+        f.write("id_token;{}\n".format(rep))
+        for index, embd in enumerate(embeddings):
+            f.write("{};{}\n".format(index, embd))
 
 '''
 returns: list of lists
@@ -88,18 +107,11 @@ lists of lists:
     embeddings[i]: embedding i
     embeddings[i][j]: embedding i, dim j
 '''
-def readEmbeddingFile():
-    pass
+def readEmbeddingFile(rep):
+    embeddings = []
+    with open(EMBEDDINGS_TXT_PATH[rep], "r") as f:
+        for i, line in enumerate(f.readlines()):
+            if i == 0: continue
+            else: embeddings.append(line.split(';')[1])
 
-
-def printToFile(tsne2word):
-
-    file1 = open("embeddings", "w")
-    file2 = open("embeddings_meta", "w")
-
-    for tsne, vals in tsne2word.items():
-        file1.write("{}\t{}\n".format(tsne[0], tsne[1]))
-        file2.write("{}\t{}\t{}\n".format(vals[0], vals[1], vals[2]))
-
-    file1.close()
-    file2.close()
+    return embeddings

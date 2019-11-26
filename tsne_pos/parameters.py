@@ -50,25 +50,44 @@ MODEL_PATH = 'postag_sdict_WED_350_CED_70_BS_150.pt'
 
 '''
 ================================================================================
-============================== TSNE PARAMETERS =================================
+============================= FILES PARAMETERS =================================
 ================================================================================
 
 
 
 '''
 
-TRAIN_EMBEDDINGS = {
-    "embeddings1" : False,
-    "embeddings2" : True,
-    "embeddings3" : False,
-    "embeddings4" : False,
-}
-
-EMBEDDINGS_PATH = {
+EMBEDDINGS_PICKLE_PATH = {
     "embeddings1": "emd1.pickle",
     "embeddings2": "emd2.pickle",
     "embeddings3": "emd3.pickle",
     "embeddings4": "emd4.pickle",
+}
+
+EMBEDDINGS_TXT_PATH = {
+    "embeddings1": "emd1.txt",
+    "embeddings2": "emd2.txt",
+    "embeddings3": "emd3.txt",
+    "embeddings4": "emd4.txt",
+}
+
+INFOS_PATH = "infos.pickle"
+VOCAB_FILE = "vocab_file.txt"
+INFO_FILE = "info_file.txt"
+
+'''
+================================================================================
+============================== TSNE PARAMETERS =================================
+================================================================================
+
+
+
+'''
+TRAIN_TSNE_EMBEDDINGS = {
+    "embeddings1" : False,
+    "embeddings2" : True,
+    "embeddings3" : False,
+    "embeddings4" : False,
 }
 
 '''

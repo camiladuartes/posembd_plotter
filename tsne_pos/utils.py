@@ -17,3 +17,10 @@ def createVocab(wordList):
             word2id[word] = len(word2id)
         idList.append(word2id[word])
     return word2id, idList
+
+
+def convertToTagNames(datasetNames, datasets, tagIds):
+    for i in range(len(tagIds)):
+        for dataset in datasets:
+            if dataset.name == datasetNames[i]:
+                return dataset.id2tag[tagIds[i]]
