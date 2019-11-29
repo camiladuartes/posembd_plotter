@@ -1,48 +1,42 @@
 from sklearn.manifold import TSNE
 
 from tsne_pos.io import saveToPickle, loadFromPickle
-from tsne_pos.parameters import TRAIN_EMBEDDINGS, EMBEDDINGS_PICKLE_PATH, TSNE_PICKLE_PATH
+from tsne_pos.parameters import EMBEDDINGS_PICKLE_PATH, TSNE_PICKLE_PATH
 
 
-def trainTSNEs():
-    embeddings = [rep for rep in TRAIN_EMBEDDINGS if TRAIN_EMBEDDINGS[rep]]
+def trainTSNEs(inFile, outFile, rep):
+
+    embds = loadFromPickle(inFile)
+    tsne = TSNE(verbose=1)
+
+    Tembeddings = None
+
+    if rep == 'embeddings1':
+
+        embd2ids = {}
+        for i, embd in enumerate(embds):
+            if embd not in embd2ids:
+                embd2ids = []
+            embd2ids[embd].append(i)
 
 
-    for rep in embeddings:
-        embds = loadFromPickle(EMBEDDINGS_PICKLE_PATH[rep])
-        tsne = TSNE(verbose=1)
+        uniqEmbds = list(embd2id.keys())
+        TUniqEmbds = tsne.fit_transform(uniqEmbds)
+        Tembeddings = [None for _ in range(len(embds))]
 
-        Tembeddings = None
-
-        if rep == 'embeddings1':
-
-            embd2ids = {}
-            for i, embd in enumerate(embds):
-                if embd not in embd2ids:
-                    embd2ids = []
-                embd2ids[embd].append(i)
+        for i, embd in enumerate(uniqEmbds):
+            tsne = TUniqEmbds[i]
+            for id in embd2ids[embd]:
+                Tembeddings[id] = tsne
+    else:
+        Tembeddings = tsne.fit_transform(embds)
 
 
-            uniqEmbds = list(embd2id.keys())
-            TUniqEmbds = tsne.fit_transform(uniqEmbds)
-            Tembeddings = [None for _ in range(len(embds))]
+    for i in range(len(Tembeddings)):
+        Tembeddings[i] = Tembeddings[i].tolist()
 
-            for i, embd in enumerate(uniqEmbds):
-                tsne = TUniqEmbds[i]
-                for id in embd2ids[embd]:
-                    Tembeddings[id] = tsne
-
-        else:
-            Tembeddings = tsne.fit_transform(embds)
-
-
-
-
-        for i in range(len(Tembeddings)):
-            Tembeddings[i] = Tembeddings[i].tolist()
-
-        saveToPickle(TSNE_PICKLE_PATH[rep], Tembeddings)
+    saveToPickle(outFile, Tembeddings)
 
 
 def saveFiles():
-    pass 
+    pass

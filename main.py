@@ -7,13 +7,17 @@ import sys
 
 import numpy as np
 
-from tsne_pos.tsne import trainTSNEs, loadTSNEs
+from tsne_pos.tsne import trainTSNEs
 from tsne_pos import computeEmbeddings
 from tsne_pos.visualize import plot
 
+params = sys.argv[1:]
+inFile = params[0]
+outFile = params[1]
+rep = params[2]
 
-computeEmbeddings()
-trainTSNEs()
+# computeEmbeddings()
+trainTSNEs(inFile, outFile, rep)
 
 
 # plot(rep2dicts)
