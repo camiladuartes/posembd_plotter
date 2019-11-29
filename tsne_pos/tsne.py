@@ -7,7 +7,7 @@ from tsne_pos.parameters import EMBEDDINGS_PICKLE_PATH, TSNE_PICKLE_PATH
 def trainTSNEs(inFile, outFile, rep):
 
     embds = loadFromPickle(inFile)
-    tsne = TSNE(verbose=1)
+    tsne = TSNE(verbose=2)
 
     Tembeddings = None
 
