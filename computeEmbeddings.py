@@ -83,3 +83,6 @@ def computeEmbeddings():
 
     for rep in embeddings:
         saveToPickle(EMBEDDINGS_PATH[rep], embd)
+
+
+computeEmbeddings()
