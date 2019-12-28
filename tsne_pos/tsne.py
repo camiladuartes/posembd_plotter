@@ -3,11 +3,18 @@ from sklearn.manifold import TSNE
 from tsne_pos.io import saveToPickle, loadFromPickle
 from tsne_pos.parameters import EMBEDDINGS_PICKLE_PATH, TSNE_PICKLE_PATH
 
+import time
 
-def trainTSNEs(inFile, outFile, rep):
+
+def trainTSNEs(inFile, outFile, rep, numEmbs=-1):
+    timeStart = time.time()
 
     embds = loadFromPickle(inFile)
-    tsne = TSNE(verbose=2)
+
+    if numEmbs == -1:
+        numEmbs = len(embds)
+
+    tsne = TSNE(verbose=2, n_jobs=-1)
 
     Tembeddings = None
 
@@ -29,13 +36,17 @@ def trainTSNEs(inFile, outFile, rep):
             for id in embd2ids[embd]:
                 Tembeddings[id] = tsne
     else:
-        Tembeddings = tsne.fit_transform(embds)
+        Tembeddings = tsne.fit_transform(embds[:numEmbs])
 
 
     for i in range(len(Tembeddings)):
         Tembeddings[i] = Tembeddings[i].tolist()
 
     saveToPickle(outFile, Tembeddings)
+
+    timeEnd = time.time()
+
+    print("[POS] TSNEs traning finished. Duration: {}".format(timeEnd - timeStart))
 
 
 def saveFiles():
