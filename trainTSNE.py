@@ -13,7 +13,7 @@ params = sys.argv[1:]
 inFile = params[0]
 outFile = params[1]
 rep = params[2]
-numEmbs = params[3]
+numEmbs = int(params[3])
 
 # computeEmbeddings()
 trainTSNEs(inFile, outFile, rep, numEmbs)
