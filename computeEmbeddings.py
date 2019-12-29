@@ -1,12 +1,14 @@
 from posembd.base import get_batches
 from posembd.datasets import DatasetsPreparer, UsableDataset
 from posembd.models import createPOSModel
-from posembd.io import sendOutput
+from posembd.io import sendOutput, saveToPickle
 
 from tsne_pos.utils import convertToText, createVocab, convertToTagNames
 
 
 import torch
+
+import sys
 
 '''
 VocabFile:
@@ -55,7 +57,7 @@ def computeEmbeddings(vocabPath, infosPicklePath):
 
     posModel.eval()
 
-    embeddings = {rep: [] for rep in EMBEDDINGS_PATH}
+    embeddings = {rep: [] for rep in EMBEDDINGS_PICKLE_PATH}
 
     words, predTags, goldTags, wordSentId, datasetNames = [], [], [], [], []
 
@@ -104,7 +106,7 @@ def computeEmbeddings(vocabPath, infosPicklePath):
     saveToPickle(infosPicklePath, (wordPos, wordIdList, predTags, goldTags))
 
     for rep in embeddings:
-        saveToPickle(EMBEDDINGS_PATH[rep], embd)
+        saveToPickle(EMBEDDINGS_PICKLE_PATH[rep], embd)
 
 
 

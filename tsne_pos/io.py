@@ -1,7 +1,7 @@
 import random, sys
 import tqdm
-from tsne_pos.parameters import *
 import pickle
+from tsne_pos.parameters import *
 
 
 def send_output(str, log_level):
