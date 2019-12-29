@@ -4,6 +4,7 @@ from posembd.models import createPOSModel
 from posembd.io import sendOutput, saveToPickle
 
 from tsne_pos.utils import convertToText, createVocab, convertToTagNames
+from tsne_pos.parameters import *
 
 
 import torch
