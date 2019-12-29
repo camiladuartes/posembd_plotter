@@ -30,45 +30,16 @@ def loadFromPickle(filePath):
     return obj
 
 '''
-VocabFile:
-# Vocab file
-id_word word
-'''
-def writeVocabFile(wordIdList):
-    with open(VOCAB_FILE, "w") as f:
-        f.write("id_word;word\n")
-        for index, word in enumerate(wordIdList):
-            f.write("{};{}\n".format(index, word))
-
-
-'''
 returns: list of strings
 '''
-def readVocabFile():
+def readVocabFile(vocabFile):
     wordIdList = []
-    with open(VOCAB_FILE, "r") as f:
+    with open(vocabFile, "r") as f:
         for i, line in enumerate(f.readlines()):
             if i == 0: continue
             else: wordIdList.append(line.split(';')[1])
 
     return wordIdList
-
-
-'''
-InfoFile:
-# Info file
-id_token dataset id_sent pos_sent id_word pred_tag gold_tag tsne_0_0 tnse_0_1 tsne_1_0 tsne_1_1 tsne_2_0 tsne_2_1 tsne_3_0 tsne_3_1
-'''
-def writeInfoFile(tokenPos, wordIds, predTags, goldTags, tsnes):
-    with open(INFOS_PATH, "w") as f:
-        f.write("id_token;dataset;id_sent;pos_sent;id_word;pred_tag;gold_tag;tsne_0_0;tnse_0_1;tsne_1_0;tsne_1_1;tsne_2_0;tsne_2_1;tsne_3_0;tsne_3_1\n")
-        for index in range(len(wordIds)):
-            f.write("{};{};{};{};".format(index, tokenPos[0], tokenPos[1], tokenPos[2]))
-            f.write("{};{};{};".format(wordIds[index], predTags[i], goldTags[i]))
-            f.write("{};{};".format(tsnes["embeddings1"][0], tsnes["embeddings1"][1]))
-            f.write("{};{};".format(tsnes["embeddings2"][0], tsnes["embeddings2"][1]))
-            f.write("{};{};".format(tsnes["embeddings3"][0], tsnes["embeddings3"][1]))
-            f.write("{};{}\n".format(tsnes["embeddings4"][0], tsnes["embeddings4"][1]))
 
 '''
 returns list of lists + columnDict
@@ -79,10 +50,10 @@ list of lists:
 
 columnDict = dict with columns ids
 '''
-def readInfoFile():
+def readInfoFile(infosPath):
     info = []
     columnDict = None
-    with open(INFOS_PATH, "r") as f:
+    with open(infosPath, "r") as f:
         for i, line in enumerate(f.readlines()):
             if i == 0: columnDict = dict(enumerate(f.split(';')))
             else: info.append(line.split(';'))
