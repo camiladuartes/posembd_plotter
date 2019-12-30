@@ -17,12 +17,6 @@ DATASETS = [
 '''
 
 DATASETS_FOLDER = 'data/'
-# DATASETS = [
-#     ('Macmorpho', ('macmorpho-train.mm.txt', True), ('macmorpho-dev.mm.txt', True), 'macmorpho-test.mm.txt'),
-#     ('Bosque', ('pt_bosque-ud-train.mm.txt', True), ('pt_bosque-ud-dev.mm.txt', True), 'pt_bosque-ud-test.mm.txt'),
-#     ('GSD', ('pt_gsd-ud-train.mm.txt', True), ('pt_gsd-ud-dev.mm.txt', True), 'pt_gsd-ud-test.mm.txt'),
-#     ('Linguateca', ('lgtc-train.mm.txt', True), ('lgtc-dev.mm.txt', True), 'lgtc-test.mm.txt')
-# ]
 
 DATASETS = [
     {'name': 'Macmorpho', 'trainFile': 'macmorpho-train.mm.txt', 'useTrain': True, 'valFile': 'macmorpho-dev.mm.txt',
@@ -65,10 +59,10 @@ EMBEDDINGS_PICKLE_PATH = {
 }
 
 TSNE_PICKLE_PATH = {
-    "embeddings1": "tsne_emd1.pickle",
-    "embeddings2": "tsne_emd2.pickle",
-    "embeddings3": "tsne_emd3.pickle",
-    "embeddings4": "tsne_emd4.pickle",
+    "embeddings1": "embeddings3_tsne.pickle",
+    "embeddings2": "embeddings3_tsne.pickle",
+    "embeddings3": "embeddings3_tsne.pickle",
+    "embeddings4": "embeddings3_tsne.pickle",
 }
 
 EMBEDDINGS_TXT_PATH = {
@@ -76,25 +70,6 @@ EMBEDDINGS_TXT_PATH = {
     "embeddings2": "emd2.txt",
     "embeddings3": "emd3.txt",
     "embeddings4": "emd4.txt",
-}
-
-INFOS_PICKLE_PATH = "infos.pickle"
-VOCAB_FILE = "vocab_file.txt"
-INFO_FILE = "info_file.txt"
-
-'''
-================================================================================
-============================== TSNE PARAMETERS =================================
-================================================================================
-
-
-
-'''
-TRAIN_TSNE_EMBEDDINGS = {
-    "embeddings1" : False,
-    "embeddings2" : True,
-    "embeddings3" : False,
-    "embeddings4" : False,
 }
 
 '''
@@ -105,13 +80,6 @@ TRAIN_TSNE_EMBEDDINGS = {
 
 
 '''
-PLOT_FLAG = {
-    "embeddings1": True,
-    "embeddings2" : False,
-    "embeddings3" : False,
-    "embeddings4" : False,
-}
-
 
 PLOT_COLORS = {
     "embeddings1": "yellow",

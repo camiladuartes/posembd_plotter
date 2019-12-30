@@ -4,9 +4,24 @@ from posembd.models import createPOSModel
 from posembd.io import sendOutput
 
 from tsne_pos.utils import convertToText, createVocab, convertToTagNames
+from tsne_pos.parameters import *
+from tsne_pos.io import saveToPickle
 
 
 import torch
+
+import sys
+
+'''
+VocabFile:
+# Vocab file
+id_word word
+'''
+def writeVocabFile(vocabFile, vocabDict):
+    with open(vocabFile, "w") as f:
+        f.write("id_word;word\n")
+        for word, index in vocabDict.items():
+            f.write("{};{}\n".format(index, word))
 
 '''
 Funcao responsavel por recuperar:
@@ -17,7 +32,18 @@ Funcao responsavel por recuperar:
     - posicao da sentenca no dataset
 '''
 
-def computeEmbeddings():
+'''
+parametros utiliazados
+    DATASETS_FOLDER: pasta dos datasets
+    DATASETS: infos dos datasets
+    CHAR_EMBEDDING_DIM: tamanho do char embedding
+    WORD_EMBEDDING_DIM: tamanho do word embedding
+    BILSTM_SIZE: tamanho da bilstm
+    MODEL_PATH: caminho para o modelo
+    EMBEDDINGS_PATH: caminho onde os embeddings serao salvos
+'''
+
+def computeEmbeddings(vocabPath, infosPicklePath):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     torch.set_printoptions(threshold=10000)
@@ -33,7 +59,7 @@ def computeEmbeddings():
 
     posModel.eval()
 
-    embeddings = {rep: [] for rep in EMBEDDINGS_PATH}
+    embeddings = {rep: [] for rep in EMBEDDINGS_PICKLE_PATH}
 
     words, predTags, goldTags, wordSentId, datasetNames = [], [], [], [], []
 
@@ -73,15 +99,20 @@ def computeEmbeddings():
     convertToTagNames(datasetNames, datasets, goldTags)
     convertToTagNames(datasetNames, datasets, predTags)
     convertToText(words)
-    _, wordIdList = createVocab(words)
+    vocabDict, wordIdList = createVocab(words)
 
     wordPos = [(datasetNames[i], wordSentId[i][0], wordSentId[i][1])
                             for i in range(len(datasetNames))]
 
-    saveToPickle(INFOS_PICKLE_PATH, (wordPos, wordIdList, predTags, goldTags))
+    writeVocabFile(vocabPath, vocabDict)
+    saveToPickle(infosPicklePath, (wordPos, wordIdList, predTags, goldTags))
 
     for rep in embeddings:
-        saveToPickle(EMBEDDINGS_PATH[rep], embd)
+        saveToPickle(EMBEDDINGS_PICKLE_PATH[rep], embeddings[rep])
 
 
-computeEmbeddings()
+
+params = sys.argv[1:]
+vocabPath = params[0]
+infosPicklePath = params[1]
+computeEmbeddings(vocabPath, infosPicklePath)

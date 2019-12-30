@@ -3,3 +3,4 @@
 *.pickle
 env_porpor/
 output.txt
+*.csv
