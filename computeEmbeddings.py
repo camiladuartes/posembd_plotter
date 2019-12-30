@@ -108,7 +108,7 @@ def computeEmbeddings(vocabPath, infosPicklePath):
     saveToPickle(infosPicklePath, (wordPos, wordIdList, predTags, goldTags))
 
     for rep in embeddings:
-        saveToPickle(EMBEDDINGS_PICKLE_PATH[rep], embd)
+        saveToPickle(EMBEDDINGS_PICKLE_PATH[rep], embeddings[rep])
 
 
 
