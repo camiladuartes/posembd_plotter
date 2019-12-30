@@ -1,10 +1,11 @@
 from posembd.base import get_batches
 from posembd.datasets import DatasetsPreparer, UsableDataset
 from posembd.models import createPOSModel
-from posembd.io import sendOutput, saveToPickle
+from posembd.io import sendOutput
 
 from tsne_pos.utils import convertToText, createVocab, convertToTagNames
 from tsne_pos.parameters import *
+from tsne_pos.io import saveToPickle
 
 
 import torch
