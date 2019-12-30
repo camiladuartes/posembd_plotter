@@ -34,12 +34,18 @@ returns: list of strings
 '''
 def readVocabFile(vocabFile):
     wordIdList = []
+    vocabDict = {}
     with open(vocabFile, "r") as f:
         for i, line in enumerate(f.readlines()):
             if i == 0: continue
-            else: wordIdList.append(line.split(';')[1])
+            else:
+                index, word = line.split(';', 1)
+                index = int(index)
+                word = word.strip()
+                wordIdList.append(word)
+                vocabDict[word] = index
 
-    return wordIdList
+    return wordIdList, vocabDict
 
 '''
 returns list of lists + columnDict
@@ -55,8 +61,14 @@ def readInfoFile(infosPath):
     columnDict = None
     with open(infosPath, "r") as f:
         for i, line in enumerate(f.readlines()):
-            if i == 0: columnDict = dict(enumerate(f.split(';')))
-            else: info.append(line.split(';'))
+            if i == 0: columnDict = dict({y.strip():x for x, y in enumerate(line.split(';'))})
+            else:
+                splittedLine = line.split(';')
+                infos0 = [int(splittedLine[0])]
+                infos1 = [splittedLine[1]]
+                infos2 = [int(x) for x in splittedLine[2:7]]
+                tsnes = [float(x) for x in splittedLine[7:]]
+                info.append(infos0 + infos1 + infos2 + tsnes)
 
     return info, columnDict
 
