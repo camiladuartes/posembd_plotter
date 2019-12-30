@@ -115,3 +115,20 @@ def readEmbeddingFile(rep):
             else: embeddings.append(line.split(';')[1])
 
     return embeddings
+
+'''
+PARAMETERS_FILE:
+    dataset;...;...
+    id_sent;...;...
+    ...
+
+returns: dict with info parameters
+        {'dataset':[..], 'id_sent':[..], 'pos_sent':[..], 'id_word':[..], 'pos_estimado':[..], 'pos_gold':[..], 'tsne': [..]}
+'''
+def readPlotParameters():
+    parametersDict = {}
+    with open(PARAMETERS_FILE, "r") as f:
+        for i, line in enumerate(f.readlines()):
+            currentline = line.split(";")
+            parametersDict[currentline[0]] = currentline[1:]
+    return parametersDict
