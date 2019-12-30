@@ -24,19 +24,23 @@ def trainTSNEs(inFile, outFile, rep, numEmbs=-1):
     if rep == 'embeddings1':
 
         embd2ids = {}
+        uniqEmbds = []
+        uniqEmbdsIndex = []
         for i, embd in enumerate(embds):
-            if embd not in embd2ids:
-                embd2ids = []
-            embd2ids[embd].append(i)
+            hashableEmbd = tuple(embd.tolist())
+            if hashableEmbd not in embd2ids:
+                embd2ids[hashableEmbd] = []
+                uniqEmbds.append(embd)
+            embd2ids[hashableEmbd].append(i)
 
 
-        uniqEmbds = list(embd2id.keys())
         TUniqEmbds = tsne.fit_transform(uniqEmbds)
         Tembeddings = [None for _ in range(len(embds))]
 
         for i, embd in enumerate(uniqEmbds):
             tsne = TUniqEmbds[i]
-            for id in embd2ids[embd]:
+            hashableEmbd = tuple(embd.tolist())
+            for id in embd2ids[hashableEmbd]:
                 Tembeddings[id] = tsne
     else:
         Tembeddings = tsne.fit_transform(embds[:numEmbs])
