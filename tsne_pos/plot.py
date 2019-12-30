@@ -2,6 +2,30 @@ import matplotlib.pyplot as plt
 import numpy as np
 from io import *
 
+def plotLevel(info, tsne_i_0, tsne_i_1, tsne_i, wordIdList, plotTitle):
+    '''Finding the xlim and ylim of each entire tsne corpora'''
+    x = info[:][columnDict[tsne_i_0]]
+    y = info[:][columnDict[tsne_i_1]]
+    # find the xlim and ylim of the entire corpora
+    fig, ax = plt.subplots(figsize=(100, 100))
+    ax.scatter(x, y, alpha=1)
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+
+    '''Ploting the tsne0 graph'''
+    fig2, ax2 = plt.subplots(figsize=(100, 100))
+    x = [item[0] for item in tsne_i]
+    y = [item[1] for item in tsne_i]
+    ax2.scatter(x, y, alpha=1)
+    ax2.set_xlim(xlim)
+    ax2.set_ylim(ylim)
+
+    for i, _ in enumerate(x):
+        ax2.annotate(wordIdList[i], (x[i], y[i]))
+
+    plt.title(plotTitle)
+    plt.show()
+
 def plot(vocabFile, infoFile):
 
     # list of strings
@@ -15,93 +39,18 @@ def plot(vocabFile, infoFile):
     # gold_tags = info[:][columnDict["gold_tag"]]
     # pred_tags = info[:][columnDict["pred_tag"]]
 
-    '''Finding the xlim and ylim of each entire tsne0 corpora'''
-    if len(tsne0) != 0:
-        x = info[:][columnDict["tsne_0_0"]]
-        y = info[:][columnDict["tsne_0_1"]]
-        # find the xlim and ylim of the entire corpora
-        fig, ax = plt.subplots(figsize=(100, 100))
-        ax.scatter(x, y, alpha=1)
-        xlim0 = ax.get_xlim()
-        ylim0 = ax.get_ylim()
+    l = [
+        'tsne_0_0', 'tsne_0_1', tsne0, "TSNE 0",
+        'tsne_1_0', 'tsne_1_1', tsne1, "TSNE 1",
+        'tsne_2_0', 'tsne_2_1', tsne2, "TSNE 2",
+        'tsne_3_0', 'tsne_3_1', tsne3, "TSNE 3",
+    ]
 
-        '''Ploting the tsne0 graph'''
-        fig2, ax2 = plt.subplots(figsize=(100, 100))
-        x = [item[0] for item in tsne0]
-        y = [item[1] for item in tsne0]
-        ax2.scatter(x, y, alpha=1)
-        ax2.set_xlim(xlim0)
-        ax2.set_ylim(ylim0)
-        for i, _ in enumerate(x):
-            ax2.annotate(wordIdList[i], (x[i], y[i]))
-        plt.title("tsne0")
-        plt.show()
+    for x in l:
+        if len(x[2]) != 0:
+            plotLevel(info, l[0], l[1], l[2], wordIdList, l[3])
 
-    '''Finding the xlim and ylim of each entire tsne1 corpora'''
-    if len(tsne1) != 0:
-        x = info[:][columnDict["tsne_1_0"]]
-        y = info[:][columnDict["tsne_1_1"]]
-        # find the xlim and ylim of the entire corpora
-        fig, ax = plt.subplots(figsize=(100, 100))
-        ax.scatter(x, y, alpha=1)
-        xlim1 = ax.get_xlim()
-        ylim1 = ax.get_ylim()
 
-        '''Ploting the tsne1 graph'''
-        fig2, ax2 = plt.subplots(figsize=(100, 100))
-        x = [item[0] for item in tsne1]
-        y = [item[1] for item in tsne1]
-        ax2.scatter(x, y, alpha=1)
-        ax2.set_xlim(xlim1)
-        ax2.set_ylim(ylim1)
-        for i, _ in enumerate(x):
-            ax2.annotate(wordIdList[i], (x[i], y[i]))
-        plt.title("tsne1")
-        plt.show()
-
-    '''Finding the xlim and ylim of each entire tsne2 corpora'''
-    if len(tsne2) != 0:
-        x = info[:][columnDict["tsne_2_0"]]
-        y = info[:][columnDict["tsne_2_1"]]
-        # find the xlim and ylim of the entire corpora
-        fig, ax = plt.subplots(figsize=(100, 100))
-        ax.scatter(x, y, alpha=1)
-        xlim2 = ax.get_xlim()
-        ylim2 = ax.get_ylim()
-
-        '''Ploting the tsne2 graph'''
-        fig2, ax2 = plt.subplots(figsize=(100, 100))
-        x = [item[0] for item in tsne2]
-        y = [item[1] for item in tsne2]
-        ax2.scatter(x, y, alpha=1)
-        ax2.set_xlim(xlim2)
-        ax2.set_ylim(ylim2)
-        for i, _ in enumerate(x):
-            ax2.annotate(wordIdList[i], (x[i], y[i]))
-        plt.title("tsne2")
-        plt.show()
-
-    '''Finding the xlim and ylim of each entire tsne3 corpora'''
-    if len(tsne3) != 0:
-        x = info[:][columnDict["tsne_3_0"]]
-        y = info[:][columnDict["tsne_3_1"]]
-        # find the xlim and ylim of the entire corpora
-        fig, ax = plt.subplots(figsize=(100, 100))
-        ax.scatter(x, y, alpha=1)
-        xlim3 = ax.get_xlim()
-        ylim3 = ax.get_ylim()
-
-        '''Ploting the tsne3 graph'''
-        fig2, ax2 = plt.subplots(figsize=(100, 100))
-        x = [item[0] for item in tsne3]
-        y = [item[1] for item in tsne3]
-        ax2.scatter(x, y, alpha=1)
-        ax2.set_xlim(xlim3)
-        ax2.set_ylim(ylim3)
-        for i, _ in enumerate(x):
-            ax2.annotate(wordIdList[i], (x[i], y[i]))
-        plt.title("tsne3")
-        plt.show()
 
 '''
 returns: 4 lists of lists of tsnes to plot
