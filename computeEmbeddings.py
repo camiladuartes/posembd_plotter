@@ -12,16 +12,33 @@ import torch
 
 import sys
 
+import argparse
+
 '''
 VocabFile:
 # Vocab file
 id_word word
 '''
-def writeVocabFile(vocabFile, vocabDict):
-    with open(vocabFile, "w") as f:
+def writeVocabFile(vocabFilePath, vocabDict):
+    with open(vocabFilePath, "w") as f:
         f.write("id_word;word\n")
         for word, index in vocabDict.items():
             f.write("{};{}\n".format(index, word))
+
+
+'''
+TagsFile:
+# Tags file
+dataset id_tag tag
+'''
+def writeTagsFile(tagsFilePath, tagsFromDatasets):
+    with open(tagsFilePath, "w") as f:
+        f.write("dataset;id_tag;tag\n")
+        for dataset, tagList in tagsFromDatasets:
+            for index, tag in enumerate(tagList):
+                f.write("{};{};{}\n".format(dataset, index, tag))
+
+
 
 '''
 Funcao responsavel por recuperar:
@@ -43,7 +60,7 @@ parametros utiliazados
     EMBEDDINGS_PATH: caminho onde os embeddings serao salvos
 '''
 
-def computeEmbeddings(vocabPath, infosPicklePath):
+def computeEmbeddings(vocabPath, infosPicklePath, tagsFilePath):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     torch.set_printoptions(threshold=10000)
@@ -51,7 +68,11 @@ def computeEmbeddings(vocabPath, infosPicklePath):
 
     datasetsPreparer = DatasetsPreparer(DATASETS_FOLDER)
     datasets = datasetsPreparer.prepare(DATASETS)
+    tagsFromDatasets = [(dataset.name, dataset.id2tag) for dataset in datasets]
     char2id, id2char = datasetsPreparer.getDicts()
+
+    writeTagsFile(tagsFilePath, tagsFromDatasets)
+    exit()
 
     posModel = createPOSModel(CHAR_EMBEDDING_DIM, WORD_EMBEDDING_DIM, char2id, BILSTM_SIZE, datasets)
     posModel.to(device)
@@ -105,6 +126,7 @@ def computeEmbeddings(vocabPath, infosPicklePath):
                             for i in range(len(datasetNames))]
 
     writeVocabFile(vocabPath, vocabDict)
+    writeTagsFile(tagsFilePath, tagsFromDatasets)
     saveToPickle(infosPicklePath, (wordPos, wordIdList, predTags, goldTags))
 
     for rep in embeddings:
@@ -112,7 +134,12 @@ def computeEmbeddings(vocabPath, infosPicklePath):
 
 
 
-params = sys.argv[1:]
-vocabPath = params[0]
-infosPicklePath = params[1]
-computeEmbeddings(vocabPath, infosPicklePath)
+parser = argparse.ArgumentParser()
+parser.add_argument("vocabPath", help="path of vocab file")
+parser.add_argument("infosPicklePath", help="path of info pickle file")
+parser.add_argument("tagsFilePath", help="path of tags file")
+args = parser.parse_args()
+vocabPath = args.vocabPath
+infosPicklePath = args.infosPicklePath
+tagsFilePath = args.tagsFilePath
+computeEmbeddings(vocabPath, infosPicklePath, tagsFilePath)

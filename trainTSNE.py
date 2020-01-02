@@ -7,7 +7,7 @@ import time
 
 from tsne_pos.io import saveToPickle, loadFromPickle
 
-
+import argparse
 
 def trainTSNEs(inFile, outFile, rep, numEmbs=-1):
     timeStart = time.time()
@@ -56,11 +56,16 @@ def trainTSNEs(inFile, outFile, rep, numEmbs=-1):
     print("[POS] TSNEs traning finished. Duration: {}".format(timeEnd - timeStart))
 
 
-params = sys.argv[1:]
-inFile = params[0]
-outFile = params[1]
-rep = params[2]
-numEmbs = int(params[3])
+parser = argparse.ArgumentParser()
+parser.add_argument("inputFile", help="path of input pickle file with original space embeddings")
+parser.add_argument("outputFile", help="path of output pickle file for tsne embeddings")
+parser.add_argument("representationLevel", help="embeedings1, 2, 3 or 4")
+parser.add_argument("numberOfEmbeddings", help="number of embeddings to train")
+args = parser.parse_args()
+inFile = args.inputFile
+outFile = args.outputFile
+rep = args.representationLevel
+numEmbs = int(args.numberOfEmbeddings)
 
 # computeEmbeddings()
 trainTSNEs(inFile, outFile, rep, numEmbs)

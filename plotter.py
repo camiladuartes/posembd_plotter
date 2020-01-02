@@ -1,30 +1,36 @@
 from tsne_pos.plot import plot, plotLevel
-from tsne_pos.io import readInfoFile, readVocabFile
+from tsne_pos.io import readInfoFile, readVocabFile, readTagsFile
 import sys
 
-def addToPlot(toPlot, info, columnDict):
-    tokenName = wordIdList[info[columnDict['id_word']]] + ' ' + str(info[columnDict['gold_tag']])
-    toPlot['embeddings1'].append((info[columnDict['tsne_0_0']], info[columnDict['tsne_0_1']], tokenName))
-    toPlot['embeddings2'].append((info[columnDict['tsne_1_0']], info[columnDict['tsne_1_1']], tokenName))
-    toPlot['embeddings3'].append((info[columnDict['tsne_2_0']], info[columnDict['tsne_2_1']], tokenName))
-    toPlot['embeddings4'].append((info[columnDict['tsne_3_0']], info[columnDict['tsne_3_1']], tokenName))
+def addToPlot(toPlot, infoIndex):
+    toPlot['embeddings1'].append(infoIndex)
+    toPlot['embeddings2'].append(infoIndex)
+    toPlot['embeddings3'].append(infoIndex)
+    toPlot['embeddings4'].append(infoIndex)
 
-def plotter(infos, columnDict, vocab, wordIdList):
+def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
+    id2tag, tag2id = tagDicts
+
     while True:
         print('Query. Separate different queries with ' '. Use * for all possible entries.')
         s = input()
         queries = s.split(' ')
         queriesDict = {}
         for query in queries:
-            token, pos = query.split('/')
+            token, datasetPos = query.split('/')
             tokenId = vocab[token]
-            # posId = None
-            if tokenId in queriesDict:
-                queriesDict[tokenId].append(pos)
-            else:
-                queriesDict[tokenId] = [pos]
 
-        print(queriesDict)
+            if datasetPos == '*':
+                queriesDict[tokenId] = '*'
+            else:
+                dataset, pos = datasetPos.split('_')
+                posId = tag2id[(dataset, pos)]
+
+                if tokenId in queriesDict:
+                    if queriesDict[tokenId] != '*':
+                        queriesDict[tokenId].append((posId, dataset, pos))
+                else:
+                    queriesDict[tokenId] = [(posId, dataset, pos)]
 
         toPlot = {
             'embeddings1' : [],
@@ -33,31 +39,46 @@ def plotter(infos, columnDict, vocab, wordIdList):
             'embeddings4' : [],
         }
 
-        for info in infos:
+        for infoIndex, info in enumerate(infos):
             wordId = info[columnDict['id_word']]
-            posId = (info[columnDict['dataset']], info[columnDict['gold_tag']])
+            posTuple = (info[columnDict['dataset']], info[columnDict['gold_tag']])
 
             addInfo = False
-            checkWord = ['*', wordId]
-            checkPos = ['*', posId]
 
-            for x in checkWord:
-                if x in queriesDict:
-                    for y in checkPos:
-                        if y in queriesDict[x]:
+            if '*' in queriesDict:
+                if queriesDict[wordId] == '*':
+                    addInfo = True
+                    continue
+                else:
+                    for posId, dataset, pos in queriesDict['*']:
+                        if posTuple == (dataset, posId):
                             addInfo = True
 
+            if wordId in queriesDict:
+                if queriesDict[wordId] == '*':
+                    addInfo = True
+                else:
+                    for posId, dataset, pos in queriesDict[wordId]:
+                        if posTuple == (dataset, posId):
+                            addInfo = True
+
+
             if addInfo:
+                addToPlot(toPlot, infoIndex)
 
-                addToPlot(toPlot, info, columnDict)
+        plot(infos, wordIdList, toPlot, columnDict, id2tag)
 
-        plot(infos, wordIdList, toPlot, columnDict)
-
-params = sys.argv[1:]
-infosPath = params[0]
-vocabPath = params[1]
+parser = argparse.ArgumentParser()
+parser.add_argument("infosPath", help="path of infos csv file")
+parser.add_argument("vocabPath", help="path of vocab csv file")
+parser.add_argument("tagsPath", help="path of tags csv file")
+args = parser.parse_args()
+infosPath = args.infosPath
+vocabPath = args.vocabPath
+tagsPath = args.tagsPath
 
 infos, columnDict = readInfoFile(infosPath)
 wordIdList, vocab = readVocabFile(vocabPath)
+tagDicts = readTagsFile(tagsPath)
 
-plotter(infos, columnDict, vocab, wordIdList)
+plotter(infos, columnDict, vocab, wordIdList, tagDicts)

@@ -72,6 +72,20 @@ def readInfoFile(infosPath):
 
     return info, columnDict
 
+def readTagsFile(tagsFilePath):
+    id2tag = {}
+    tag2id = {}
+    with open(tagsFilePath, "r") as f:
+        for i, line in enumerate(f.readlines()):
+            if i == 0: continue
+            else:
+                dataset, index, tag = line.split(';')
+                index = int(index)
+                id2tag[(dataset, index)] = tag
+                tag2id[(dataset, tag)] = index
+
+    return id2tag, tag2id
+
 '''
 embedding_iFile:
 # Embedding i File
