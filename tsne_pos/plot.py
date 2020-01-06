@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from io import *
+import matplotlib.cm as cm
 
-def plotLevel(infos, wordIdList, columnDict, id2tag, tsne_i_0, tsne_i_1, info_indexes, plotTitle):
+def plotLevel(cont, infos, wordIdList, columnDict, id2tag, tsne_i_0, tsne_i_1, info_indexes, plotTitle):
     '''Finding the xlim and ylim of each entire tsne corpora'''
     x = [info[columnDict[tsne_i_0]] for info in infos]
     y = [info[columnDict[tsne_i_1]] for info in infos]
@@ -11,21 +12,25 @@ def plotLevel(infos, wordIdList, columnDict, id2tag, tsne_i_0, tsne_i_1, info_in
     ax.scatter(x, y, alpha=1)
     xlim = ax.get_xlim()
     ylim = ax.get_ylim()
+    # so we don't plot all embeddings automatically:
+    if plt.get_fignums():
+        # window open
+        plt.close(fig)
 
     '''Ploting the tsne_i graph'''
-    fig2, ax2 = plt.subplots(figsize=(100, 100))
     x = [infos[infoIndex][columnDict[tsne_i_0]] for infoIndex in info_indexes]
     y = [infos[infoIndex][columnDict[tsne_i_1]] for infoIndex in info_indexes]
-
-    ax2.scatter(x, y, alpha=1)
-    ax2.set_xlim(xlim)
-    ax2.set_ylim(ylim)
+    plt.figure(cont)
+    # plt.scatter(x, y, alpha=1, c=wordIdList, cmap=cm.brg)
+    plt.scatter(x, y, alpha=1)
+    plt.xlim(xlim)
+    plt.ylim(ylim)
 
     for i, infoIndex in enumerate(info_indexes):
         dataset = infos[infoIndex][columnDict['dataset']]
         word = wordIdList[infos[infoIndex][columnDict['id_word']]]
         pos = id2tag[(dataset, infos[infoIndex][columnDict['gold_tag']])]
-        ax2.annotate(" {} {}".format(word, pos), (x[i], y[i]))
+        plt.annotate(" {} {}".format(word, pos), (x[i], y[i]), xytext=(x[i]+0.08, y[i]+0.08))
 
     plt.title(plotTitle)
     plt.show()
@@ -39,6 +44,8 @@ def plot(infos, wordIdList, toPlot, columnDict, id2tag):
         {'tsne_i_0': 'tsne_3_0', 'tsne_i_1': 'tsne_3_1', 'info_indexes': toPlot['embeddings4'], 'plotTitle': "TSNE 3"},
     ]
 
+    cont = 0
     for x in l:
         if len(x['info_indexes']) != 0:
-            plotLevel(infos, wordIdList, columnDict, id2tag, **x)
+            cont = cont + 1
+            plotLevel(cont, infos, wordIdList, columnDict, id2tag, **x)
