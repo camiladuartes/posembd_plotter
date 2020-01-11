@@ -1,7 +1,7 @@
 import sys
 from tsne_pos.parameters import *
 from tsne_pos.io import loadFromPickle
-
+import argparse
 
 '''
 recebe os arquivos de vocabulario
@@ -38,8 +38,15 @@ def createInfoFile(infosPicklePath, infosPath, tsnePicklePaths):
             f.write("{};{}\n".format(tsnes["embeddings4"][index][0], tsnes["embeddings4"][index][1]))
 
 
-params = sys.argv[1:]
-infosPicklePath = params[0]
-infosPath = params[1]
+parser = argparse.ArgumentParser()
+parser.add_argument("infosPicklePath", help="path of infos pickle file")
+parser.add_argument("infosPath", help="path of info csv file")
+args = parser.parse_args()
+infosPicklePath = args.infosPicklePath
+infosPath = args.infosPath
+
+infos, columnDict = readInfoFile(infosPath)
+wordIdList, vocab = readVocabFile(vocabPath)
+id2tag, _ = readTagsFile(tagsPath)
 
 createInfoFile(infosPicklePath, infosPath, TSNE_PICKLE_PATH)
