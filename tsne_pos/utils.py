@@ -44,7 +44,7 @@ def calculateLimits(infos, columnDict, tsne_i_0, tsne_i_1):
 def centroid(infos, wordIdList, columnDict, id2tag, info_indexes, word, pos, tsne_i_0, tsne_i_1):
     x_ = [infos[infoIndex][columnDict[tsne_i_0]] for infoIndex in info_indexes]
     y_ = [infos[infoIndex][columnDict[tsne_i_1]] for infoIndex in info_indexes]
-    x, y, occurenceNumber = 0
+    x = y = occurenceNumber = 0
     for i, infoIndex in enumerate(info_indexes):
         if (word == wordIdList[infos[infoIndex][columnDict['id_word']]] and
             pos == id2tag[(dataset, infos[infoIndex][columnDict['gold_tag']])]):
