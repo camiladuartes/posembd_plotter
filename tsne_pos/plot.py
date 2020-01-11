@@ -20,7 +20,7 @@ def plotLevel(cont, xlim, ylim, infos, wordIdList, columnDict, id2tag, tsne_i_0,
         dataset = infos[infoIndex][columnDict['dataset']]
         word = wordIdList[infos[infoIndex][columnDict['id_word']]]
         pos = id2tag[(dataset, infos[infoIndex][columnDict['gold_tag']])]
-        plt.annotate(" {} {}".format(word, pos), (x[i], y[i]), xytext=(x[i]+0.08, y[i]+0.08))
+        plt.annotate(" {} {}".format(word, pos), (x[i], y[i]))
 
     plt.title(plotTitle)
     plt.show()
