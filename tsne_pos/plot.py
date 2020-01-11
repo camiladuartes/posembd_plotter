@@ -3,26 +3,15 @@ import numpy as np
 from io import *
 import matplotlib.cm as cm
 
-def plotLevel(cont, infos, wordIdList, columnDict, id2tag, tsne_i_0, tsne_i_1, info_indexes, plotTitle):
-    '''Finding the xlim and ylim of each entire tsne corpora'''
-    x = [info[columnDict[tsne_i_0]] for info in infos]
-    y = [info[columnDict[tsne_i_1]] for info in infos]
-    # find the xlim and ylim of the entire corpora
-    fig, ax = plt.subplots(figsize=(100, 100))
-    ax.scatter(x, y, alpha=1)
-    xlim = ax.get_xlim()
-    ylim = ax.get_ylim()
-    # so we don't plot all embeddings automatically:
-    if plt.get_fignums():
-        # window open
-        plt.close(fig)
-
+def plotLevel(cont, xlim, ylim, infos, wordIdList, columnDict, id2tag, tsne_i_0, tsne_i_1, info_indexes, plotTitle):
     '''Ploting the tsne_i graph'''
     x = [infos[infoIndex][columnDict[tsne_i_0]] for infoIndex in info_indexes]
     y = [infos[infoIndex][columnDict[tsne_i_1]] for infoIndex in info_indexes]
     plt.figure(cont)
-    # plt.scatter(x, y, alpha=1, c=wordIdList, cmap=cm.brg)
-    plt.scatter(x, y, alpha=1)
+
+    words = [wordIdList[infos[infoIndex][columnDict['id_word']]] for i, infoIndex in enumerate(info_indexes)]
+    colors = [float(hash(s) % 256) / 256 for s in words]
+    plt.scatter(x, y, alpha=1, c=colors, cmap=cm.brg)
     plt.xlim(xlim)
     plt.ylim(ylim)
 
@@ -47,5 +36,6 @@ def plot(infos, wordIdList, toPlot, columnDict, id2tag):
     cont = 0
     for x in l:
         if len(x['info_indexes']) != 0:
-            cont = cont + 1
-            plotLevel(cont, infos, wordIdList, columnDict, id2tag, **x)
+            cont += 1
+            xlim, ylim = calculateLimits(infos, columnDict, x['tsne_i_0'], x['tsne_i_1'])
+            plotLevel(cont, xlim, ylim, infos, wordIdList, columnDict, id2tag, **x)
