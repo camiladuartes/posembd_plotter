@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
 from io import *
+from .utils import *
 
 def plotLevel(cont, xlim, ylim, infos, wordIdList, columnDict, id2tag, tsne_i_0, tsne_i_1, info_indexes, plotTitle):
     '''Ploting the tsne_i graph'''
