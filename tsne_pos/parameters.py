@@ -59,10 +59,10 @@ EMBEDDINGS_PICKLE_PATH = {
 }
 
 TSNE_PICKLE_PATH = {
-    "embeddings1": "emdb1_tsne.pickle",
-    "embeddings2": "embeddings2_tsne.pickle",
-    "embeddings3": "embeddings3_tsne.pickle",
-    "embeddings4": "embeddings3_tsne.pickle",
+    "embeddings1": "tsne_embd1.pickle",
+    "embeddings2": "tsne_embd2.pickle",
+    "embeddings3": "tsne_embd3.pickle",
+    "embeddings4": "tsne_embd4.pickle",
 }
 
 EMBEDDINGS_TXT_PATH = {

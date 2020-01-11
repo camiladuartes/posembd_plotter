@@ -45,8 +45,4 @@ args = parser.parse_args()
 infosPicklePath = args.infosPicklePath
 infosPath = args.infosPath
 
-infos, columnDict = readInfoFile(infosPath)
-wordIdList, vocab = readVocabFile(vocabPath)
-id2tag, _ = readTagsFile(tagsPath)
-
 createInfoFile(infosPicklePath, infosPath, TSNE_PICKLE_PATH)

@@ -2,6 +2,8 @@ from tsne_pos.plot import plot, plotLevel
 from tsne_pos.io import readInfoFile, readVocabFile, readTagsFile
 import sys
 
+import argparse
+
 def addToPlot(toPlot, infoIndex):
     toPlot['embeddings1'].append(infoIndex)
     toPlot['embeddings2'].append(infoIndex)
