@@ -1,4 +1,5 @@
 from tsne_pos.plot import plot, plotLevel
+from tsne_pos.utils import calculateLimits
 from tsne_pos.io import readInfoFile, readVocabFile, readTagsFile
 import sys
 
@@ -68,7 +69,20 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
             if addInfo:
                 addToPlot(toPlot, infoIndex)
 
-        plot(infos, wordIdList, toPlot, columnDict, id2tag)
+        # Calculating xlim and ylim
+        xlim = {}
+        ylim = {}
+        l = [
+            {'tsne_i_0': 'tsne_0_0', 'tsne_i_1': 'tsne_0_1', 'info_indexes': toPlot['embeddings1']},
+            {'tsne_i_0': 'tsne_1_0', 'tsne_i_1': 'tsne_1_1', 'info_indexes': toPlot['embeddings2']},
+            {'tsne_i_0': 'tsne_2_0', 'tsne_i_1': 'tsne_2_1', 'info_indexes': toPlot['embeddings3']},
+            {'tsne_i_0': 'tsne_3_0', 'tsne_i_1': 'tsne_3_1', 'info_indexes': toPlot['embeddings4']},
+        ]
+        for x in l:
+            if len(x['info_indexes']) != 0:
+                xlim[x['tsne_i_0']], ylim[x['tsne_i_1']] = calculateLimits(infos, columnDict, x['tsne_i_0'], x['tsne_i_1'])
+
+        plot(infos, wordIdList, toPlot, columnDict, id2tag, xlim, ylim)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("infosPath", help="path of infos csv file")

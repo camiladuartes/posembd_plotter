@@ -25,7 +25,7 @@ def plotLevel(cont, xlim, ylim, infos, wordIdList, columnDict, id2tag, tsne_i_0,
     plt.title(plotTitle)
     plt.show()
 
-def plot(infos, wordIdList, toPlot, columnDict, id2tag):
+def plot(infos, wordIdList, toPlot, columnDict, id2tag, xlim, ylim):
 
     l = [
         {'tsne_i_0': 'tsne_0_0', 'tsne_i_1': 'tsne_0_1', 'info_indexes': toPlot['embeddings1'], 'plotTitle': "TSNE 0"},
@@ -38,5 +38,4 @@ def plot(infos, wordIdList, toPlot, columnDict, id2tag):
     for x in l:
         if len(x['info_indexes']) != 0:
             cont += 1
-            xlim, ylim = calculateLimits(infos, columnDict, x['tsne_i_0'], x['tsne_i_1'])
-            plotLevel(cont, xlim, ylim, infos, wordIdList, columnDict, id2tag, **x)
+            plotLevel(cont, xlim[x['tsne_i_0']], ylim[x['tsne_i_1']], infos, wordIdList, columnDict, id2tag, **x)
