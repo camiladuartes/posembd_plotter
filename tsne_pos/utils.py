@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 def convertToText(words):
     for i in range(len(words)):
         if len(words[i]) == 1:

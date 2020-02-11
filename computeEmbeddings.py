@@ -15,6 +15,43 @@ import sys
 import argparse
 
 '''
+DATASETS_FOLDER: path to the folder with your dataset.
+
+Fill in the datasets infos following the structure
+DATASETS = [
+    ('DATSET1_NAME', ('DATASET1_TRAIN_FILE', USE_TRAIN), ('DATASET1_VAL_FILE', USE_VAL),  'DATASET1_TEST_FILE'),
+    ('DATSET2_NAME', ('DATASET2_TRAIN_FILE', USE_TRAIN), ('DATASET2_VAL_FILE', USE_VAL),  'DATASET2_TEST_FILE'),
+    ...
+    ('DATSETN_NAME', ('DATASETN_TRAIN_FILE', USE_TRAIN), ('DATASETN_VAL_FILE', USE_VAL),  'DATASETN_TEST_FILE'),
+]
+
+'''
+
+DATASETS_FOLDER = 'data/'
+
+DATASETS = [
+    {'name': 'Macmorpho', 'trainFile': 'macmorpho-train.mm.txt', 'useTrain': True, 'valFile': 'macmorpho-dev.mm.txt',
+        'useVal': True, 'testFile': 'macmorpho-test.mm.txt'},
+    {'name': 'Bosque', 'trainFile': 'pt_bosque-ud-train.mm.txt', 'useTrain': True, 'valFile': 'pt_bosque-ud-dev.mm.txt',
+        'useVal': True, 'testFile': 'pt_bosque-ud-test.mm.txt'},
+    {'name': 'GSD', 'trainFile': 'pt_gsd-ud-train.mm.txt', 'useTrain': True, 'valFile': 'pt_gsd-ud-dev.mm.txt',
+        'useVal': True, 'testFile': 'pt_gsd-ud-test.mm.txt'},
+    {'name': 'Linguateca', 'trainFile': 'lgtc-train.mm.txt', 'useTrain': True, 'valFile': 'lgtc-dev.mm.txt',
+        'useVal': True, 'testFile': 'lgtc-test.mm.txt'}
+]
+
+MODEL_PATH = 'postag_sdict_WED_350_CED_70_BS_150.pt'
+
+def retrieveModelHiperparams(modelPath):
+    modelsHiperpars = modelPath.split('_')
+    return {
+        'WED' : modelsHiperpars[3],
+        'CED' : modelsHiperpars[5],
+        'BS' : modelsHiperpars[7]
+    }
+
+
+'''
 VocabFile:
 # Vocab file
 id_word word
@@ -60,28 +97,24 @@ parametros utiliazados
     EMBEDDINGS_PATH: caminho onde os embeddings serao salvos
 '''
 
-def computeEmbeddings(vocabPath, infosPicklePath, tagsFilePath):
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    torch.set_printoptions(threshold=10000)
-    torch.no_grad()
-
+def loadModelAndDatasets(device):
+    # loading datasets from datasets folder
     datasetsPreparer = DatasetsPreparer(DATASETS_FOLDER)
     datasets = datasetsPreparer.prepare(DATASETS)
+
+    # retrieving tags and char dicts
     tagsFromDatasets = [(dataset.name, dataset.id2tag) for dataset in datasets]
     char2id, id2char = datasetsPreparer.getDicts()
 
-    writeTagsFile(tagsFilePath, tagsFromDatasets)
-    exit()
-
-    posModel = createPOSModel(CHAR_EMBEDDING_DIM, WORD_EMBEDDING_DIM, char2id, BILSTM_SIZE, datasets)
+    hiperparams = retrieveModelHiperparams(MODEL_PATH)
+    posModel = createPOSModel(hiperparams['CED'], hiperparams['WED'], char2id, hiperparams['BS'], datasets)
     posModel.to(device)
     posModel.load_state_dict(torch.load(MODEL_PATH, map_location=device))
-
     posModel.eval()
 
-    embeddings = {rep: [] for rep in EMBEDDINGS_PICKLE_PATH}
+    return datasets, posModel, id2char, tagsFromDatasets
 
+def retrieveLists(datasets, posModel, id2char):
     words, predTags, goldTags, wordSentId, datasetNames = [], [], [], [], []
 
     sentId = 0
@@ -117,6 +150,20 @@ def computeEmbeddings(vocabPath, infosPicklePath, tagsFilePath):
         sentId += 1
 
 
+def computeEmbeddings(vocabPath, infosPicklePath, tagsFilePath):
+
+    # pytorch logic
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    torch.set_printoptions(threshold=10000)
+    torch.no_grad()
+
+    datasets, posModel, id2char, tagsFromDatasets = loadModelAndDatasets(device)
+
+    embeddings = {rep: [] for rep in EMBEDDINGS_PICKLE_PATH}
+
+    words, predTags, goldTags, wordSentId, datasetNames = retrieveLists(datasets, posModel, id2char)
+
+
     convertToTagNames(datasetNames, datasets, goldTags)
     convertToTagNames(datasetNames, datasets, predTags)
     convertToText(words)
@@ -133,13 +180,12 @@ def computeEmbeddings(vocabPath, infosPicklePath, tagsFilePath):
         saveToPickle(EMBEDDINGS_PICKLE_PATH[rep], embeddings[rep])
 
 
+##################################### HANDLING ARGS ###################################
 
 parser = argparse.ArgumentParser()
 parser.add_argument("vocabPath", help="path of vocab file")
 parser.add_argument("infosPicklePath", help="path of info pickle file")
 parser.add_argument("tagsFilePath", help="path of tags file")
 args = parser.parse_args()
-vocabPath = args.vocabPath
-infosPicklePath = args.infosPicklePath
-tagsFilePath = args.tagsFilePath
-computeEmbeddings(vocabPath, infosPicklePath, tagsFilePath)
+
+computeEmbeddings(args.vocabPath, args.infosPicklePath, args.tagsFilePath)
