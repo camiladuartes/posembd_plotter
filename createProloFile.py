@@ -9,9 +9,9 @@ Usage:
     OUTPUT_PATH: path where prolo csv file will be saved
 '''
 
+import argparse
 
 from tsne_pos.io import readInfoFile, readVocabFile, readTagsFile
-import argparse
 
 
 def createProloFile(infos, columnDict, wordIdList, id2tag, outputPath):

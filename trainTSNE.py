@@ -1,22 +1,25 @@
 '''
 Script for training TSNEs of representation levels
 Usage:
-    python trainTSNE.py INPUT_PATH REPRESENTATION_LVL NUMBER_OF_EMBEDDINGS OUTPUT_PATH
+    python trainTSNE.py INPUT_DIR REPRESENTATION_LVL NUMBER_OF_EMBEDDINGS OUTPUT_DIR
 
-    INPUT_PATH: path to pickle file containing embeddings computed at computeEmbeddings.py
+    INPUT_DIR: path to directory containing pickle embeddings computed at computeEmbeddings.py
     REPRESENTATION_LVL: 1, 2, 3 or 4, indicating the level of embedding to be trained
     NUMBER_OF_EMBEDDINGS: number of embeddings that will be trained at TSNEs algorithm. -1 to train all embeddings
-    OUTPUT_PATH: path to pickle file that will contain the trained TSNEs
+    OUTPUT_DIR: path to directory that will contain the trained TSNEs
 '''
 
-import random
+import os
 import sys
-import numpy as np
-from sklearn.manifold import TSNE
 import time
+import random
 import argparse
 
+import numpy as np
+from sklearn.manifold import TSNE
+
 from tsne_pos.io import saveToPickle, loadFromPickle
+from tsne_pos.globals import EMBEDDINGS_PICKLE_PATH, TSNE_PICKLE_PATH
 
 
 def trainTSNEs(inFile, outFile, rep, numEmbs=-1):
@@ -33,7 +36,7 @@ def trainTSNEs(inFile, outFile, rep, numEmbs=-1):
 
     Tembeddings = None
 
-    if rep == '1':
+    if rep == 0:
         # the first representation is context unsensitive
         # therefore one word will have always the same representation
 
@@ -60,7 +63,6 @@ def trainTSNEs(inFile, outFile, rep, numEmbs=-1):
         # other representatioo levels are context sensitive
         Tembeddings = tsne.fit_transform(embds[:numEmbs])
 
-    # needs
     for i in range(len(Tembeddings)):
         Tembeddings[i] = Tembeddings[i].tolist()
 
@@ -74,13 +76,24 @@ def trainTSNEs(inFile, outFile, rep, numEmbs=-1):
 ##################################### HANDLING ARGS ###################################
 
 parser = argparse.ArgumentParser()
-parser.add_argument("inputPath", help="path to pickle file containing embeddings computed at computeEmbeddings.py")
-parser.add_argument("representationLevel", help="1, 2, 3 or 4, indicating the level of embedding to be trained")
+parser.add_argument("inputDir", help="path to directory containing pickle embeddings computed at computeEmbeddings.py")
+parser.add_argument("representationLevel", help="0, 1, 2 or 3, indicating the level of embedding to be trained")
 parser.add_argument("numberOfEmbeddings", help="number of embeddings that will be trained at TSNEs algorithm. -1 to train all embeddings")
-parser.add_argument("outputPath", help="path to pickle file that will contain the trained TSNEs")
+parser.add_argument("outputDir", help="path to directory that will contain the trained TSNEs")
 args = parser.parse_args()
 
-repLvl = args.representationLevel
+# Converting from string to ints
+repLvl = int(args.representationLevel)
 numEmbs = int(args.numberOfEmbeddings)
 
-trainTSNEs(args.inputPath, args.outputPath, repLvl, numEmbs)
+# Joining input directory to global embeddings filenames
+inputPath = os.path.join(args.inputDir, EMBEDDINGS_PICKLE_PATH[repLvl])
+
+# Creating output directory if it does not exist
+if not os.path.exists(args.outputDir):
+    os.mkdir(args.outputDir)
+
+# Joining output directory to global embeddings filenames
+outputPath = os.path.join(args.outputDir, TSNE_PICKLE_PATH[repLvl])
+
+trainTSNEs(inputPath, outputPath, repLvl, numEmbs)
