@@ -1,3 +1,13 @@
+'''
+Script for plotting the trained TSNEs using WORD/POS queries
+Usage:
+    python plotter.py INFOS_PATH VOCAB_PATH TAGS_PATH
+
+    INFOS_PATH: path where infos csv file is saved
+    VOCAB_PATH: path where vocab csv file is saved
+    TAGS_PATH: path where tags csv file is saved
+'''
+
 from tsne_pos.io import readInfoFile, readVocabFile, readTagsFile
 import sys
 
@@ -147,9 +157,9 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("infosPath", help="path of infos csv file")
-parser.add_argument("vocabPath", help="path of vocab csv file")
-parser.add_argument("tagsPath", help="path of tags csv file")
+parser.add_argument("infosPath", help="path to infos csv file")
+parser.add_argument("vocabPath", help="path to vocab csv file")
+parser.add_argument("tagsPath", help="path to tags csv file")
 args = parser.parse_args()
 
 infos, columnDict = readInfoFile(args.infosPath)

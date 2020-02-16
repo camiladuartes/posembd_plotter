@@ -4,7 +4,7 @@ Usage:
     python trainTSNE.py INPUT_DIR REPRESENTATION_LVL NUMBER_OF_EMBEDDINGS OUTPUT_DIR
 
     INPUT_DIR: path to directory containing pickle embeddings computed at computeEmbeddings.py
-    REPRESENTATION_LVL: 1, 2, 3 or 4, indicating the level of embedding to be trained
+    REPRESENTATION_LVL: 0, 1, 2 or 3, indicating the level of embedding to be trained
     NUMBER_OF_EMBEDDINGS: number of embeddings that will be trained at TSNEs algorithm. -1 to train all embeddings
     OUTPUT_DIR: path to directory that will contain the trained TSNEs
 '''

@@ -1,3 +1,14 @@
+'''
+Script for extracting infos from the POS model and datasets
+Usage:
+    python extractInfos.py VOCAB_PATH INFOS_PICKLE_PATH TAGS_PATH EMBEDDINGS_DIR
+
+    VOCAB_PATH: path where vocab csv file will be saved
+    INFOS_PICKLE_PATH: path to pickle file where the info object will be saved
+    TAGS_PATH: path where tags csv file will be saved
+    EMBEDDINGS_DIR: directory where the pickle files from the embeddings will be saved
+'''
+
 import sys
 import argparse
 
