@@ -1,9 +1,10 @@
 '''
 Script for creating info file
 Usage:
-    python createInfoFile.py INFOS_PICKLE_PATH OUTPUT_PATH
+    python createInfoFile.py INFOS_PICKLE_PATH TSNES_DIR OUTPUT_PATH
 
     INFOS_PICKLE_PATH: path to pickle file where the info object is saved
+    TSNES_DIR: directory where the trained tsnes pickles are saved
     OUTPUT_PATH: path where info csv file will be saved
 '''
 
@@ -60,7 +61,7 @@ def createInfoFile(infosPicklePath, infosPath, tsnePicklePaths):
 
 parser = argparse.ArgumentParser()
 parser.add_argument("infosPicklePath", help="path of infos pickle file")
-parser.add_argument("tsnesDir", help="path to directory where tsnes pickles are saved")
+parser.add_argument("tsnesDir", help="directory where the trained tsnes pickles are saved")
 parser.add_argument("outputFile", help="path to csv")
 args = parser.parse_args()
 
