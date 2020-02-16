@@ -27,21 +27,6 @@ def convertToTagNames(datasetNames, datasets, tagIds):
             if dataset.name == datasetNames[i]:
                 return dataset.id2tag[tagIds[i]]
 
-def calculateLimits(infos, columnDict, tsne_i_0, tsne_i_1):
-    '''Finding the xlim and ylim of each entire tsne corpora'''
-    x = [info[columnDict[tsne_i_0]] for info in infos]
-    y = [info[columnDict[tsne_i_1]] for info in infos]
-    # find the xlim and ylim of the entire corpora
-    fig, ax = plt.subplots(figsize=(100, 100))
-    ax.scatter(x, y, alpha=1)
-    xlim = ax.get_xlim()
-    ylim = ax.get_ylim()
-    # so we don't plot all embeddings automatically:
-    if plt.get_fignums():
-        # window open
-        plt.close(fig)
-    return xlim, ylim
-
 def centroid(infos, wordIdList, columnDict, id2tag, info_indexes, word, pos, tsne_i_0, tsne_i_1):
     x_ = [infos[infoIndex][columnDict[tsne_i_0]] for infoIndex in info_indexes]
     y_ = [infos[infoIndex][columnDict[tsne_i_1]] for infoIndex in info_indexes]

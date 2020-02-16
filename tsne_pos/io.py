@@ -1,7 +1,6 @@
 import random, sys
 import tqdm
 import pickle
-from tsne_pos.parameters import *
 
 
 def send_output(str, log_level):
@@ -17,22 +16,26 @@ def send_output(str, log_level):
 
 
 def saveToPickle(filePath, obj):
+    print('> Saving pickle file at ' + filePath)
     pickle_out = open(filePath, "wb")
     pickle.dump(obj, pickle_out)
     pickle_out.close()
-
+    print('< Done!')
 
 def loadFromPickle(filePath):
+    print('> Loading pickle file from ' + filePath)
     pickle_in = open(filePath, "rb")
     obj = pickle.load(pickle_in)
     pickle_in.close()
 
+    print('< Done!')
     return obj
 
 '''
 returns: list of strings
 '''
 def readVocabFile(vocabFile):
+    print('> Reading vocab file from ' + vocabFile)
     wordIdList = []
     vocabDict = {}
     with open(vocabFile, "r") as f:
@@ -45,6 +48,7 @@ def readVocabFile(vocabFile):
                 wordIdList.append(word)
                 vocabDict[word] = index
 
+    print('< Done!')
     return wordIdList, vocabDict
 
 '''
@@ -57,6 +61,7 @@ list of lists:
 columnDict = dict with columns ids
 '''
 def readInfoFile(infosPath):
+    print('> Reading info file from ' + infosPath)
     info = []
     columnDict = None
     with open(infosPath, "r") as f:
@@ -70,9 +75,11 @@ def readInfoFile(infosPath):
                 tsnes = [float(x) for x in splittedLine[7:]]
                 info.append(infos0 + infos1 + infos2 + tsnes)
 
+    print('< Done!')
     return info, columnDict
 
 def readTagsFile(tagsFilePath):
+    print('> Reading tags file from ' + tagsFilePath)
     id2tag = {}
     tag2id = {}
     with open(tagsFilePath, "r") as f:
@@ -84,6 +91,7 @@ def readTagsFile(tagsFilePath):
                 id2tag[(dataset, index)] = tag
                 tag2id[(dataset, tag)] = index
 
+    print('< Done!')
     return id2tag, tag2id
 
 '''
@@ -112,20 +120,3 @@ def readEmbeddingFile(rep):
             else: embeddings.append(line.split(';')[1])
 
     return embeddings
-
-'''
-PARAMETERS_FILE:
-    dataset;...;...
-    id_sent;...;...
-    ...
-
-returns: dict with info parameters
-        {'dataset':[..], 'id_sent':[..], 'pos_sent':[..], 'id_word':[..], 'pos_estimado':[..], 'pos_gold':[..], 'tsne': [..]}
-'''
-def readPlotParameters():
-    parametersDict = {}
-    with open(PARAMETERS_FILE, "r") as f:
-        for i, line in enumerate(f.readlines()):
-            currentline = line.split(";")
-            parametersDict[currentline[0]] = currentline[1:]
-    return parametersDict
