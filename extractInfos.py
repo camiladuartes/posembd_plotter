@@ -7,7 +7,7 @@ from posembd.base import get_batches
 from posembd.datasets import DatasetsPreparer, UsableDataset
 from posembd.models import createPOSModel
 
-from tsne_pos.utils import convertToText, createVocab, convertToTagNames
+from tsne_pos import convertToText, createVocab, convertToTagNames
 from tsne_pos.globals import EMBEDDINGS_PICKLE_PATH
 from tsne_pos.io import saveToPickle
 
@@ -48,13 +48,14 @@ def retrieveModelHiperparams(modelPath):
         'BS' : modelsHiperpars[7]
     }
 
+
 # Function for writing vocab file
 def writeVocabFile(vocabFilePath, vocabDict):
     # Header:
     # id_word word
     with open(vocabFilePath, "w") as f:
         f.write("id_word;word\n")
-        for word, index in vocabDict.items():
+        for word, index in tqdm(vocabDict.items(), "Writing vocab file"):
             f.write("{};{}\n".format(index, word))
 
 
@@ -65,9 +66,8 @@ def writeTagsFile(tagsFilePath, tagsFromDatasets):
     with open(tagsFilePath, "w") as f:
         f.write("dataset;id_tag;tag\n")
         for dataset, tagList in tagsFromDatasets:
-            for index, tag in enumerate(tagList):
+            for index, tag in tqdm(enumerate(tagList), "Writing tags file"):
                 f.write("{};{};{}\n".format(dataset, index, tag))
-
 
 
 # Function for loading model and datasets from given paths
@@ -89,6 +89,7 @@ def loadModelAndDatasets(device):
     posModel.eval()
 
     return datasets, posModel, id2char, tagsFromDatasets
+
 
 # Function for retrieving infos lists using the model and datasets
 def retrieveLists(datasets, posModel, id2char):

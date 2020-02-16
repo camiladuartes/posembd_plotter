@@ -13,11 +13,12 @@ import argparse
 
 from tsne_pos.io import readInfoFile, readVocabFile, readTagsFile
 
+from tqdm import tqdm
 
 def createProloFile(infos, columnDict, wordIdList, id2tag, outputPath):
     with open(outputPath, "w") as f:
         f.write("dataset;id_sent;palavra;gold_tag\n")
-        for info in infos:
+        for info in tqdm(infos):
             # for each token at info file, retrieve its dataset, sentence, word and tag id
             dataset = info[columnDict['dataset']]
             idSent = info[columnDict['id_sent']]

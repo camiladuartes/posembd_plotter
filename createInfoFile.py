@@ -14,6 +14,7 @@ import argparse
 from tsne_pos.io import loadFromPickle
 from tsne_pos.globals import TSNE_PICKLE_PATH
 
+from tqdm import tqdm
 
 '''
 InfoFile:
@@ -42,7 +43,7 @@ def createInfoFile(infosPicklePath, infosPath, tsnePicklePaths):
     with open(infosPath, "w") as f:
         # header of info file
         f.write("id_token;dataset;id_sent;pos_sent;id_word;pred_tag;gold_tag;tsne_0_0;tsne_0_1;tsne_1_0;tsne_1_1;tsne_2_0;tsne_2_1;tsne_3_0;tsne_3_1\n")
-        for index in range(len(tokenPos)):
+        for index in tqdm(range(len(tokenPos)), "Writing info file"):
             # writing index token pos attributes
             f.write("{};{};{};{};".format(index, tokenPos[index][0], tokenPos[index][1], tokenPos[index][2]))
 

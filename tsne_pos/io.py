@@ -1,7 +1,6 @@
 import random, sys
-import tqdm
+from tqdm import tqdm
 import pickle
-
 
 def send_output(str, log_level):
     if log_level <= LOG_LVL:
@@ -35,11 +34,11 @@ def loadFromPickle(filePath):
 returns: list of strings
 '''
 def readVocabFile(vocabFile):
-    print('> Reading vocab file from ' + vocabFile)
     wordIdList = []
     vocabDict = {}
     with open(vocabFile, "r") as f:
-        for i, line in enumerate(f.readlines()):
+        lines = f.readlines()
+        for i, line in tqdm(enumerate(lines), "Reading vocab file", total=len(lines)):
             if i == 0: continue
             else:
                 index, word = line.split(';', 1)
@@ -48,7 +47,6 @@ def readVocabFile(vocabFile):
                 wordIdList.append(word)
                 vocabDict[word] = index
 
-    print('< Done!')
     return wordIdList, vocabDict
 
 '''
@@ -61,11 +59,11 @@ list of lists:
 columnDict = dict with columns ids
 '''
 def readInfoFile(infosPath):
-    print('> Reading info file from ' + infosPath)
     info = []
     columnDict = None
     with open(infosPath, "r") as f:
-        for i, line in enumerate(f.readlines()):
+        lines = f.readlines()
+        for i, line in tqdm(enumerate(lines), "Reading info file", total=len(lines)):
             if i == 0: columnDict = dict({y.strip():x for x, y in enumerate(line.split(';'))})
             else:
                 splittedLine = line.split(';')
@@ -75,15 +73,14 @@ def readInfoFile(infosPath):
                 tsnes = [float(x) for x in splittedLine[7:]]
                 info.append(infos0 + infos1 + infos2 + tsnes)
 
-    print('< Done!')
     return info, columnDict
 
 def readTagsFile(tagsFilePath):
-    print('> Reading tags file from ' + tagsFilePath)
     id2tag = {}
     tag2id = {}
     with open(tagsFilePath, "r") as f:
-        for i, line in enumerate(f.readlines()):
+        lines = f.readlines()
+        for i, line in tqdm(enumerate(lines), "Reading tags file", total=len(lines)):
             if i == 0: continue
             else:
                 dataset, index, tag = line.split(';')
@@ -91,7 +88,6 @@ def readTagsFile(tagsFilePath):
                 id2tag[(dataset, index)] = tag
                 tag2id[(dataset, tag)] = index
 
-    print('< Done!')
     return id2tag, tag2id
 
 '''

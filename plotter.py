@@ -8,6 +8,8 @@ import matplotlib.cm as cm
 import numpy as np
 import time
 
+from tqdm import tqdm
+
 def parseQueries(queries, vocab, tag2id):
     ## Different queries are separeted with a ' '
     queries = queries.split(' ')
@@ -52,7 +54,7 @@ def getInfosToPlot(queriesDict, infos, columnDict, wordIdList, id2tag):
     infosToPlot = []
 
     ## Going through all infos and extracting infos of interest
-    for infoIndex, info in enumerate(infos):
+    for infoIndex, info in tqdm(enumerate(infos), "Extracting infos of interest", total=len(infos)):
         addInfo = False
         wordId = info[columnDict['id_word']]
         posTuple = (info[columnDict['dataset']], info[columnDict['gold_tag']])
@@ -89,19 +91,17 @@ def calculateLimits(infos, columnDict):
     print('> Calculating plot limits')
     lims = []
     for i in range(4):
-        x = [info[columnDict['tsne_{}_0'.format(i)]] for info in infos]
-        y = [info[columnDict['tsne_{}_1'.format(i)]] for info in infos]
+        x = [info[columnDict['tsne_{}_0'.format(i)]] for info in tqdm(infos, "X coords, TSNE {}".format(i))]
+        y = [info[columnDict['tsne_{}_1'.format(i)]] for info in tqdm(infos, "Y coords, TSNE {}".format(i))]
 
         # find the xlim and ylim of the entire corpora
         fig, ax = plt.subplots(figsize=(100, 100))
         ax.scatter(x, y, alpha=1)
-        xlim = ax.get_xlim()
-        ylim = ax.get_ylim()
         # so we don't plot all embeddings automatically:
         if plt.get_fignums():
             # window open
             plt.close(fig)
-        lims.append((xlim, ylim))
+        lims.append((ax.get_xlim(), ax.get_ylim()))
     print('< Done!')
     return lims
 
