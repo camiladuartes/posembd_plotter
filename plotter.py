@@ -127,7 +127,8 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
         queriesDict = parseQueries(queries, vocab, tag2id)
         infosToPlot, infosToPlotColumnDict = getInfosToPlot(queriesDict, infos, columnDict, wordIdList, id2tag)
 
-
+        fig_ = [4]
+        # window_ = [(0,0), (0,500), (500,0), (500,500)]
         for i in range(4):
             ## Plot title
             plotTitle = 'TSNE {}'.format(i)
@@ -135,7 +136,10 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
             ## Retrieving x and y coords for TSNEs to be plot
             x = [infoToPlot[infosToPlotColumnDict['tsnes']][i][0] for infoToPlot in infosToPlot]
             y = [infoToPlot[infosToPlotColumnDict['tsnes']][i][1] for infoToPlot in infosToPlot]
-            plt.figure(i, clear=True)
+
+            fig = plt.figure(i, clear=True)
+            fig_.append(fig)
+            # fig.canvas.manager.window.move(window_[i][0], window_[i][1])
 
             colors = [float(hash(infoToPlot[infosToPlotColumnDict['word']]) % 256) / 256
                                 for infoToPlot in infosToPlot]
@@ -148,9 +152,16 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
                 word = infoToPlot[infosToPlotColumnDict['word']]
                 pos = infoToPlot[infosToPlotColumnDict['pos']]
                 plt.annotate(" {} {}".format(word, pos), (x[i], y[i]))
-
             plt.title(plotTitle)
-        plt.show(block=False)
+
+        print(">> Press \"q\" to close all figures.")
+        def quit_figure(event):
+            if event.key == 'q':
+                for i in range(4):
+                    plt.close(fig_[i])
+        cid = plt.gcf().canvas.mpl_connect('key_press_event', quit_figure)
+
+        plt.show()
 
 
 ##################################### HANDLING ARGS ###################################
