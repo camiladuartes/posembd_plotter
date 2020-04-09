@@ -26,6 +26,7 @@ def parseQueries(queries, vocab, tag2id):
     ## Different queries are separeted with a ' '
     queries = queries.split(' ')
 
+
     ## Structure where queries will be saved
     queriesDict = {}
 
