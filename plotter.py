@@ -20,6 +20,8 @@ import time
 
 from tqdm import tqdm
 
+import pyautogui
+
 def parseQueries(queries, vocab, tag2id):
     ## Different queries are separeted with a ' '
     queries = queries.split(' ')
@@ -128,7 +130,9 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
         infosToPlot, infosToPlotColumnDict = getInfosToPlot(queriesDict, infos, columnDict, wordIdList, id2tag)
 
         fig_ = [4]
-        # window_ = [(0,0), (0,500), (500,0), (500,500)]
+        # Getting screen resolution
+        w, h = pyautogui.size()
+        window_ = [(0,0), (0,h), (w,0), (w,h)]
         for i in range(4):
             ## Plot title
             plotTitle = 'TSNE {}'.format(i)
@@ -137,9 +141,12 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
             x = [infoToPlot[infosToPlotColumnDict['tsnes']][i][0] for infoToPlot in infosToPlot]
             y = [infoToPlot[infosToPlotColumnDict['tsnes']][i][1] for infoToPlot in infosToPlot]
 
-            fig = plt.figure(i, clear=True)
+            # Turning pixels into inches (divided by 2 because there are 4 figures)
+            figs_x = ((w/2)-55) * 0.010416666666819
+            figs_y = ((h/2)-55) * 0.010416666666819
+            fig = plt.figure(i, clear=True, figsize=(figs_x, figs_y))
             fig_.append(fig)
-            # fig.canvas.manager.window.move(window_[i][0], window_[i][1])
+            fig.canvas.manager.window.move(window_[i][0], window_[i][1])
 
             colors = [float(hash(infoToPlot[infosToPlotColumnDict['word']]) % 256) / 256
                                 for infoToPlot in infosToPlot]
