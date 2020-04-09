@@ -24,6 +24,7 @@ def parseQueries(queries, vocab, tag2id):
     ## Different queries are separeted with a ' '
     queries = queries.split(' ')
 
+
     ## Structure where queries will be saved
     queriesDict = {}
 
@@ -67,7 +68,9 @@ def getInfosToPlot(queriesDict, infos, columnDict, wordIdList, id2tag):
     for infoIndex, info in tqdm(enumerate(infos), "Extracting infos of interest", total=len(infos)):
         addInfo = False
         wordId = info[columnDict['id_word']]
-        posTuple = (info[columnDict['dataset']], info[columnDict['gold_tag']])
+        dataset = info[columnDict['dataset']]
+        goldTag = info[columnDict['gold_tag']]
+        predTag = info[columnDict['pred_tag']]
 
         ## If we want to plot all tokens
         if '*' in queriesDict:
@@ -89,10 +92,11 @@ def getInfosToPlot(queriesDict, infos, columnDict, wordIdList, id2tag):
 
         if addInfo:
             wordForm = wordIdList[wordId]
-            POS = id2tag[posTuple]
+            goldPOS = id2tag[(dataset, goldTag)]
+            predPOS = id2tag[(dataset, predTag)]
             tsnes = [(info[columnDict['tsne_{}_0'.format(i)]], info[columnDict['tsne_{}_1'.format(i)]])
                                     for i in range(4)]
-            infosToPlot.append((wordForm, POS, info[columnDict['dataset']], tsnes))
+            infosToPlot.append((wordForm, (goldPOS, predPOS), info[columnDict['dataset']], tsnes))
 
     return infosToPlot, infosToPlotColumnDict
 
@@ -146,11 +150,11 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
 
             for i, infoToPlot in enumerate(infosToPlot):
                 word = infoToPlot[infosToPlotColumnDict['word']]
-                pos = infoToPlot[infosToPlotColumnDict['pos']]
-                plt.annotate(" {} {}".format(word, pos), (x[i], y[i]))
+                goldPOS, predPOS = infoToPlot[infosToPlotColumnDict['pos']]
+                plt.annotate(" {} {}".format(word, predPOS), (x[i], y[i]))
 
             plt.title(plotTitle)
-        plt.show(block=False)
+        plt.show()
 
 
 ##################################### HANDLING ARGS ###################################
