@@ -22,11 +22,11 @@ def createVocab(wordList):
     return word2id, idList
 
 
-def convertToTagNames(datasetNames, datasets, tagIds):
+def convertToTagNames(wordPos, datasets, tagIds):
     for i in range(len(tagIds)):
         for dataset in datasets:
-            if dataset.name == datasetNames[i]:
-                return dataset.id2tag[tagIds[i]]
+            if dataset.name == wordPos[i][0]:
+                tagIds[i] = dataset.id2tag[tagIds[i]]
 
 
 def centroid(infos, wordIdList, columnDict, id2tag, info_indexes, word, pos, tsne_i_0, tsne_i_1):
