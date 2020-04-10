@@ -26,7 +26,6 @@ def parseQueries(queries, vocab, tag2id):
     ## Different queries are separeted with a ' '
     queries = queries.split(' ')
 
-
     ## Structure where queries will be saved
     queriesDict = {}
 
@@ -133,10 +132,7 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
         queriesDict = parseQueries(queries, vocab, tag2id)
         infosToPlot, infosToPlotColumnDict = getInfosToPlot(queriesDict, infos, columnDict, wordIdList, id2tag)
 
-        fig_ = [4]
-        # Getting screen resolution
-        w, h = pyautogui.size()
-        window_ = [(0,0), (0,h), (w,0), (w,h)]
+
         for i in range(4):
             ## Plot title
             plotTitle = 'TSNE {}'.format(i)
@@ -144,7 +140,7 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
             ## Retrieving x and y coords for TSNEs to be plot
             x = [infoToPlot[infosToPlotColumnDict['tsnes']][i][0] for infoToPlot in infosToPlot]
             y = [infoToPlot[infosToPlotColumnDict['tsnes']][i][1] for infoToPlot in infosToPlot]
-
+            
             # Turning pixels into inches (divided by 2 because there are 4 figures)
             figs_x = ((w/2)-55) * 0.010416666666819
             figs_y = ((h/2)-55) * 0.010416666666819

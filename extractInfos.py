@@ -9,7 +9,7 @@ Usage:
     EMBEDDINGS_DIR: directory where the pickle files from the embeddings will be saved
 '''
 
-import sys
+import sys, os
 import argparse
 
 import torch
@@ -22,6 +22,7 @@ from tsne_pos import convertToText, createVocab, convertToTagNames
 from tsne_pos.globals import EMBEDDINGS_PICKLE_PATH
 from tsne_pos.io import saveToPickle
 
+from tqdm import tqdm
 
 
 
@@ -38,26 +39,18 @@ DATASETS_DIR = 'data/'
 # ]
 DATASETS = [
     {'name': 'Macmorpho', 'trainFile': 'macmorpho-train.mm.txt', 'useTrain': True, 'valFile': 'macmorpho-dev.mm.txt',
-        'useVal': True, 'testFile': 'macmorpho-test.mm.txt'},
+        'useVal': True, 'testFile': 'macmorpho-test.mm.txt', 'tagSet': 'MM'},
     {'name': 'Bosque', 'trainFile': 'pt_bosque-ud-train.mm.txt', 'useTrain': True, 'valFile': 'pt_bosque-ud-dev.mm.txt',
-        'useVal': True, 'testFile': 'pt_bosque-ud-test.mm.txt'},
+        'useVal': True, 'testFile': 'pt_bosque-ud-test.mm.txt', 'tagSet': 'UD'},
     {'name': 'GSD', 'trainFile': 'pt_gsd-ud-train.mm.txt', 'useTrain': True, 'valFile': 'pt_gsd-ud-dev.mm.txt',
-        'useVal': True, 'testFile': 'pt_gsd-ud-test.mm.txt'},
+        'useVal': True, 'testFile': 'pt_gsd-ud-test.mm.txt', 'tagSet': 'UD'},
     {'name': 'Linguateca', 'trainFile': 'lgtc-train.mm.txt', 'useTrain': True, 'valFile': 'lgtc-dev.mm.txt',
-        'useVal': True, 'testFile': 'lgtc-test.mm.txt'}
+        'useVal': True, 'testFile': 'lgtc-test.mm.txt', 'tagSet': 'LT'},
+    {'name': 'PennTreeBank', 'trainFile': 'ptb-train.mm.txt', 'useTrain': True, 'valFile': 'ptb-dev.mm.txt',
+        'useVal': True, 'testFile': 'ptb-test.mm.txt', 'tagSet': 'PTB'},
+    {'name': 'EWT', 'trainFile': 'en_ewt-ud-train.mm.txt', 'useTrain': True, 'valFile': 'en_ewt-ud-dev.mm.txt',
+        'useVal': True, 'testFile': 'en_ewt-ud-test.mm.txt', 'tagSet': 'UD'},
 ]
-
-# Path to trained posembd model
-MODEL_PATH = 'postag_sdict_WED_350_CED_70_BS_150.pt'
-
-# Function for retrieving models hiperparameters from its name
-def retrieveModelHiperparams(modelPath):
-    modelsHiperpars = modelPath.split('_')
-    return {
-        'WED' : modelsHiperpars[3],
-        'CED' : modelsHiperpars[5],
-        'BS' : modelsHiperpars[7]
-    }
 
 
 # Function for writing vocab file
@@ -82,7 +75,7 @@ def writeTagsFile(tagsFilePath, tagsFromDatasets):
 
 
 # Function for loading model and datasets from given paths
-def loadModelAndDatasets(device):
+def loadModelAndDatasets(device, modelPath, ced, wed, ped):
 
     # Loading datasets from datasets folder
     datasetsPreparer = DatasetsPreparer(DATASETS_DIR)
@@ -93,24 +86,25 @@ def loadModelAndDatasets(device):
     char2id, id2char = datasetsPreparer.getDicts()
 
     # Loading and preparing model
-    hiperparams = retrieveModelHiperparams(MODEL_PATH)
-    posModel = createPOSModel(hiperparams['CED'], hiperparams['WED'], char2id, hiperparams['BS'], datasets)
+    posModel = createPOSModel(ced, wed, ped, char2id, datasets)
     posModel.to(device)
-    posModel.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+    posModel.load_state_dict(torch.load(modelPath, map_location=device))
     posModel.eval()
 
     return datasets, posModel, id2char, tagsFromDatasets
 
 
 # Function for retrieving infos lists using the model and datasets
-def retrieveLists(datasets, posModel, id2char):
+def retrieveLists(datasets, posModel, id2char, device):
 
     # Initializing vars
     words, predTags, goldTags, wordPosInfos = [], [], [], []
     embeddings = [[] for _ in range(4)]
     sentId = 0
 
-    for itr in get_batches(datasets, "train"):
+    dataset2tagset = {dataset["name"] : dataset["tagSet"] for dataset in DATASETS}
+
+    for itr in get_batches(datasets, "train", batchSize = 1, numBatches = 2):
 
         # Getting vars
         inputs, targets, datasetName = itr
@@ -126,8 +120,8 @@ def retrieveLists(datasets, posModel, id2char):
         inputs = [[word.to(device) for word in sample] for sample in inputs]
 
         # Feeding the model and getting output
-        output = posModel(inputs)
-        _, pred = torch.max(output['Macmorpho'], 2)
+        output = posModel.forward(inputs, desiredOutput = [True, True, True, True], batch_process_char = False)
+        _, pred = torch.max(output[dataset2tagset[datasetName]], 2)
         pred = pred.view(1, -1)
 
         # Retrieving predicted labels
@@ -135,10 +129,10 @@ def retrieveLists(datasets, posModel, id2char):
 
         # Retrieving computed embeddings
         for i in range(4):
-            embeddings[i] += [embd for embd in output["embeddings{}".format(i)].data.cpu().numpy()[0]]
+            embeddings[i] += [embd for embd in output[i].data.cpu().numpy()[0]]
 
         # Retrieving dataset names and word/sent pos
-        wordPosInfos.append([(datasetName, len(inputs))])
+        wordPosInfos.append((datasetName, len(inputs[0])))
 
         # Updating sentence id
         sentId += 1
@@ -147,14 +141,24 @@ def retrieveLists(datasets, posModel, id2char):
         torch.cuda.empty_cache()
 
     # Word position is
-    wordPos = [[(wordPosInfo[0], i, j) for j in range(wordPosInfo[1])]
-            for i, wordPosInfo in enumerate(wordPosInfos)]
+    wordPos = [(wordPosInfo[0], i, j) for i, wordPosInfo in enumerate(wordPosInfos)
+                for j in range(wordPosInfo[1])]
 
     return words, predTags, goldTags, wordPos, embeddings
 
 
 # Main function
-def extractInfos(vocabPath, infosPicklePath, tagsFilePath, embeddingsPath):
+def extractInfos(args):
+    vocabPath = args.vocabPath
+    infosPicklePath = args.infosPicklePath
+    tagsFilePath = args.tagsFilePath
+    modelPath = args.modelPath
+    wed = int(args.wed)
+    ced = int(args.ced)
+    ped = int(args.ped)
+
+    # Updating output paths for embeddings
+    embeddingsPath = [os.path.join(args.embeddingsDir, path) for path in EMBEDDINGS_PICKLE_PATH]
 
     # Pytorch logic
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -162,14 +166,14 @@ def extractInfos(vocabPath, infosPicklePath, tagsFilePath, embeddingsPath):
     torch.no_grad()
 
     # Loading model and datasets
-    datasets, posModel, id2char, tagsFromDatasets = loadModelAndDatasets(device)
+    datasets, posModel, id2char, tagsFromDatasets = loadModelAndDatasets(device, modelPath, ced, wed, ped)
 
     # Retrieving lists of infos
-    words, predTags, goldTags, wordPos, embeddings = retrieveLists(datasets, posModel, id2char)
+    words, predTags, goldTags, wordPos, embeddings = retrieveLists(datasets, posModel, id2char, device)
 
     # Converting ids to words
-    convertToTagNames(datasetNames, datasets, goldTags)
-    convertToTagNames(datasetNames, datasets, predTags)
+    convertToTagNames(wordPos, datasets, goldTags)
+    convertToTagNames(wordPos, datasets, predTags)
     convertToText(words)
 
     # Creating vocabulary and token-word id list
@@ -186,17 +190,19 @@ def extractInfos(vocabPath, infosPicklePath, tagsFilePath, embeddingsPath):
 ##################################### HANDLING ARGS ###################################
 
 parser = argparse.ArgumentParser()
-parser.add_argument("vocabPath", help="path of vocab file")
-parser.add_argument("infosPicklePath", help="path of info pickle file")
-parser.add_argument("tagsFilePath", help="path of tags file")
-parser.add_argument("embeddingsDir", help="embeddings dir")
+parser.add_argument("--vocabPath", help="path of vocab file", required=True)
+parser.add_argument("--infosPicklePath", help="path of info pickle file", required=True)
+parser.add_argument("--tagsFilePath", help="path of tags file", required=True)
+parser.add_argument("--embeddingsDir", help="embeddings dir", required=True)
+parser.add_argument("--modelPath", help="modelPath", required=True)
+parser.add_argument("--ced", help="modelPath", required=True)
+parser.add_argument("--wed", help="modelPath", required=True)
+parser.add_argument("--ped", help="modelPath", required=True)
 args = parser.parse_args()
 
 # Creating directory if it does not exist
 if not os.path.exists(args.embeddingsDir):
     os.mkdir(args.embeddingsDir)
 
-# Updating output paths for embeddings
-embeddingsPath = [os.path.join(args.embeddingsDir, path) for path in EMBEDDINGS_PICKLE_PATH]
 
-extractInfos(args.vocabPath, args.infosPicklePath, args.tagsFilePath, embeddingsPath)
+extractInfos(args)
