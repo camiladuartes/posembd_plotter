@@ -70,8 +70,8 @@ def getInfosToPlot(queriesDict, infos, columnDict, wordIdList, id2tag):
         addInfo = False
         wordId = info[columnDict['id_word']]
         dataset = info[columnDict['dataset']]
-        goldTag = info[columnDict['gold_tag']]
-        predTag = info[columnDict['pred_tag']]
+        goldPOS = info[columnDict['gold_tag']]
+        predPOS = info[columnDict['pred_tag']]
 
         ## If we want to plot all tokens
         if '*' in queriesDict:
@@ -93,8 +93,6 @@ def getInfosToPlot(queriesDict, infos, columnDict, wordIdList, id2tag):
 
         if addInfo:
             wordForm = wordIdList[wordId]
-            goldPOS = id2tag[(dataset, goldTag)]
-            predPOS = id2tag[(dataset, predTag)]
             tsnes = [(info[columnDict['tsne_{}_0'.format(i)]], info[columnDict['tsne_{}_1'.format(i)]])
                                     for i in range(4)]
             infosToPlot.append((wordForm, (goldPOS, predPOS), info[columnDict['dataset']], tsnes))
@@ -129,9 +127,15 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
         print('Query. Separate different queries with \' \'. Use * for all possible entries.')
         queries = input()
         plt.close('all')
-        queriesDict = parseQueries(queries, vocab, tag2id)
+        try:
+            queriesDict = parseQueries(queries, vocab, tag2id)
+        except:
+            continue
         infosToPlot, infosToPlotColumnDict = getInfosToPlot(queriesDict, infos, columnDict, wordIdList, id2tag)
 
+        fig_ = [4]
+        w, h = pyautogui.size()
+        window_ = [(0,0), (0,h), (w,0), (w,h)]
 
         for i in range(4):
             ## Plot title
@@ -140,7 +144,7 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
             ## Retrieving x and y coords for TSNEs to be plot
             x = [infoToPlot[infosToPlotColumnDict['tsnes']][i][0] for infoToPlot in infosToPlot]
             y = [infoToPlot[infosToPlotColumnDict['tsnes']][i][1] for infoToPlot in infosToPlot]
-            
+
             # Turning pixels into inches (divided by 2 because there are 4 figures)
             figs_x = ((w/2)-55) * 0.010416666666819
             figs_y = ((h/2)-55) * 0.010416666666819
