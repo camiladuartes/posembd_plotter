@@ -69,9 +69,10 @@ def readInfoFile(infosPath):
                 splittedLine = line.split(';')
                 infos0 = [int(splittedLine[0])]
                 infos1 = [splittedLine[1]]
-                infos2 = [int(x) for x in splittedLine[2:7]]
+                infos2 = [int(x) for x in splittedLine[2:5]]
+                infos3 = splittedLine[5:7]
                 tsnes = [float(x) for x in splittedLine[7:]]
-                info.append(infos0 + infos1 + infos2 + tsnes)
+                info.append(infos0 + infos1 + infos2 + infos3 + tsnes)
 
     return info, columnDict
 
