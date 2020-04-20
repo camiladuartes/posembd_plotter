@@ -66,6 +66,6 @@ parser.add_argument("outputFile", help="path to csv")
 args = parser.parse_args()
 
 # Joining input directory to global embeddings filenames
-tsnesPaths = [os.join(args.tsnesDir, TSNE_PICKLE_PATH[i]) for i in range(4)]
+tsnesPaths = [os.path.join(args.tsnesDir, TSNE_PICKLE_PATH[i]) for i in range(4)]
 
 createInfoFile(args.infosPicklePath, args.outputFile, tsnesPaths)
