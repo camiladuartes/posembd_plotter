@@ -107,14 +107,12 @@ def calculateLimits(infos, columnDict):
         x = [info[columnDict['tsne_{}_0'.format(i)]] for info in tqdm(infos, "X coords, TSNE {}".format(i))]
         y = [info[columnDict['tsne_{}_1'.format(i)]] for info in tqdm(infos, "Y coords, TSNE {}".format(i))]
 
-        # find the xlim and ylim of the entire corpora
-        fig, ax = plt.subplots(figsize=(100, 100))
-        ax.scatter(x, y, alpha=1)
-        # so we don't plot all embeddings automatically:
-        if plt.get_fignums():
-            # window open
-            plt.close(fig)
-        lims.append((ax.get_xlim(), ax.get_ylim()))
+        npx = np.asarray(x)
+        npy = np.asarray(y)
+
+        lims.append(((npx.min(), npx.max()), (npy.min(), npy.max())))
+
+
     print('< Done!')
     return lims
 
@@ -156,8 +154,9 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
                                 for infoToPlot in infosToPlot]
             plt.scatter(x, y, alpha=1, c=colors, cmap=cm.brg, edgecolors=[(0.0, 0.0, 0.0, 1.0) for _ in colors])
 
-            plt.xlim(lims[i][0])
-            plt.ylim(lims[i][1])
+            ax = plt.gca()
+            ax.set_xlim(lims[i][0])
+            ax.set_ylim(lims[i][1])
 
             for i, infoToPlot in enumerate(infosToPlot):
                 word = infoToPlot[infosToPlotColumnDict['word']]
