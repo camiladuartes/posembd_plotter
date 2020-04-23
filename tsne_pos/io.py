@@ -84,7 +84,7 @@ def readTagsFile(tagsFilePath):
         for i, line in tqdm(enumerate(lines), "Reading tags file", total=len(lines)):
             if i == 0: continue
             else:
-                dataset, index, tag = line.split(';')
+                dataset, index, tag = [x.strip() for x in line.split(';')]
                 index = int(index)
                 id2tag[(dataset, index)] = tag
                 tag2id[(dataset, tag)] = index
