@@ -42,15 +42,15 @@ def parseQueries(queries, vocab, tag2id):
         else:
             ## Else, get its POS id
             dataset, pos = datasetPos.split('_')
-            posId = tag2id[(dataset, pos)]
+
 
             ## If token is already at the structure
             if tokenId in queriesDict:
                 ## And not as '*' option, add query to list
                 if queriesDict[tokenId] != '*':
-                    queriesDict[tokenId].append((dataset, posId))
+                    queriesDict[tokenId].append((dataset, pos))
             else:
-                queriesDict[tokenId] = [(dataset, posId)]
+                queriesDict[tokenId] = [(dataset, pos)]
 
     return queriesDict
 
@@ -72,6 +72,7 @@ def getInfosToPlot(queriesDict, infos, columnDict, wordIdList, id2tag):
         dataset = info[columnDict['dataset']]
         goldPOS = info[columnDict['gold_tag']]
         predPOS = info[columnDict['pred_tag']]
+        posTuple = (dataset, goldPOS)
 
         ## If we want to plot all tokens
         if '*' in queriesDict:
@@ -125,10 +126,10 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
         print('Query. Separate different queries with \' \'. Use * for all possible entries.')
         queries = input()
         plt.close('all')
-        try:
-            queriesDict = parseQueries(queries, vocab, tag2id)
-        except:
-            continue
+        # try:
+        queriesDict = parseQueries(queries, vocab, tag2id)
+        # except:
+            # continue
         infosToPlot, infosToPlotColumnDict = getInfosToPlot(queriesDict, infos, columnDict, wordIdList, id2tag)
 
         fig_ = [4]
