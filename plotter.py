@@ -176,11 +176,8 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
                     centroids.append(centroid(word, pos, x_, y_))
 
                 ## Assigning x's and y's to plot
-                x = []
-                y = []
-                for c in centroids:
-                    x.append(c[1][0])
-                    y.append(c[1][1])
+                x = [c[1][0] for c in centroids]
+                y = [c[1][1] for c in centroids]
             else:
                 ## Retrieving x and y coords for TSNEs to be plot
                 x = [infoToPlot[infosToPlotColumnDict['tsnes']][i][0] for infoToPlot in infosToPlot]
