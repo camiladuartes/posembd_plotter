@@ -39,8 +39,7 @@ def centroid(word, pos, x_, y_):
         occurenceNumber = len(x_)
         x /= occurenceNumber
         y /= occurenceNumber
+        centroid = [(word, pos), [x, y]]
     else:
-        x = x_
-        y = y_
-    centroid = [(word, pos), [x, y]]
+        centroid = [(word, pos), [x_, y_]]
     return centroid

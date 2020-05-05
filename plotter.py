@@ -147,12 +147,8 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
             ## Plot title
             plotTitle = 'TSNE {}'.format(i)
 
-            ## Retrieving x and y coords for TSNEs to be plot
-            x = [infoToPlot[infosToPlotColumnDict['tsnes']][i][0] for infoToPlot in infosToPlot]
-            y = [infoToPlot[infosToPlotColumnDict['tsnes']][i][1] for infoToPlot in infosToPlot]
-
             ### Centroid
-            if boolCentroid == True:
+            if boolCentroid:
                 ## Preparing dict to pass through centroid function
                 dict_cent = {}
                 for infoToPlot in infosToPlot:
@@ -185,6 +181,10 @@ def plotter(infos, columnDict, vocab, wordIdList, tagDicts):
                 for c in centroids:
                     x.append(c[1][0])
                     y.append(c[1][1])
+            else:
+                ## Retrieving x and y coords for TSNEs to be plot
+                x = [infoToPlot[infosToPlotColumnDict['tsnes']][i][0] for infoToPlot in infosToPlot]
+                y = [infoToPlot[infosToPlotColumnDict['tsnes']][i][1] for infoToPlot in infosToPlot]
 
             # Turning pixels into inches (divided by 2 because there are 4 figures)
             figs_x = ((w/2)-55) * 0.010416666666819
