@@ -49,7 +49,8 @@ def parseQueries(queries, vocab, tag2id):
         else:
             ## Else, get its POS id
             dataset, pos = datasetPos.split('_')
-
+            if pos != '*':
+                pos = str(tag2id[(dataset, pos)])
 
             ## If token is already at the structure
             if tokenId in queriesDict:
@@ -83,7 +84,6 @@ def getInfosToPlot(queriesDict, infos, columnDict, wordIdList, id2tag):
 
         ## If we want to plot all tokens
         if '*' in queriesDict:
-            ## And all the POS
             if queriesDict[wordId] == '*':
                 addInfo = True
             elif posTuple in queriesDict['*']:
