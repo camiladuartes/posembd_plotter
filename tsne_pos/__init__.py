@@ -27,19 +27,3 @@ def convertToTagNames(wordPos, datasets, tagIds):
         for dataset in datasets:
             if dataset.name == wordPos[i][0]:
                 tagIds[i] = dataset.id2tag[tagIds[i]]
-
-
-def centroid(word, pos, x_, y_):
-    x = y = 0
-    if isinstance(x_, list):
-        for i in x_:
-            x += i
-        for j in y_:
-            y += j
-        occurenceNumber = len(x_)
-        x /= occurenceNumber
-        y /= occurenceNumber
-        centroid = [(word, pos), [x, y]]
-    else:
-        centroid = [(word, pos), [x_, y_]]
-    return centroid
