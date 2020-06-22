@@ -47,6 +47,9 @@ def parseQueries(queries, vocab, tag2id):
         ## Retrieve token ID from saved vocab
         tokenId = vocab[token]
 
+        ## If its set to retrieve all words from a POS
+        # if token == '*':
+
         ## If its set to retrieve all POS from token
         if datasetPos == '*':
             queriesDict[tokenId] = '*'
@@ -184,7 +187,7 @@ while True:
 
     selectedInfosDF['id_word'] = selectedInfosDF['id_word'].map(wordIdDict)
 
-    fig = ps.make_subplots(rows=2, cols=2, shared_xaxes=False)
+    fig = ps.make_subplots(rows=2, cols=2, shared_xaxes=False, subplot_titles=("TSNE 0", "TSNE 1", "TSNE 2", "TSNE 3"))
 
     for i in range(4):
         ## Plot title
@@ -194,9 +197,10 @@ while True:
         temp_fig = px.scatter(selectedInfosDF,
                               x="tsne_{}_0".format(i),
                               y="tsne_{}_1".format(i),
+                              color="tsne_0_0",
                               hover_data=["id_word", 'dataset', 'gold_tag']
                              )
-
+        fig.update_layout(title_text="TSNES")
         temp_fig.update_xaxes(range=list(range_x))
         temp_fig.update_yaxes(range=list(range_y))
 
